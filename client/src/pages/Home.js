@@ -1,16 +1,11 @@
 import React from "react";
 import "./Home.css";
-import logo from "../assets/streamLogo.png";
+import Header from "../components/Header";
 
 const Home = () => {
   return (
     <div className="homepage">
-      <div className="header">
-        <div className="logo-container">
-          <img src={logo} alt="StreamHub Logo" className="logo" />
-          <h1 className="site-name">StreamHub</h1>
-        </div>
-      </div>
+      <Header />
       <div className="content">
         <h1>StreamHub - The Easiest Way to Live Stream</h1>
         <h2>
