@@ -1,0 +1,22 @@
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client:/home/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server:/home/app
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
