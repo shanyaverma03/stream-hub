@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 
 import Header from "../components/Header";
 import "./Dashboard.css";
 import youTubeLogo from "../assets/ytLogo.png";
 
+const socket = io("http://localhost:8000");
+
 function Dashboard() {
   const [isYouTubeSelected, setIsYouTubeSelected] = useState(false);
+  const [media, setMedia] = useState(null);
   const videoRef = useRef(null);
 
   const getUserMedia = async () => {
@@ -14,6 +18,7 @@ function Dashboard() {
         audio: true,
         video: true,
       });
+      setMedia(media);
       if (videoRef.current) {
         videoRef.current.srcObject = media;
       }
@@ -23,8 +28,34 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Socket connected", socket.id);
+    });
+
     getUserMedia();
+
+    return () => {
+      if (socket.readyState === 1) {
+        socket.close();
+      }
+    };
   }, []);
+
+  const startLiveStreamHandler = () => {
+    //Record stream in real time and convert to binary
+    const mediaRecorder = new MediaRecorder(media, {
+      audioBitsPerSecond: 128000,
+      videoBitsPerSecond: 2500000,
+      framerate: 25,
+    });
+    mediaRecorder.ondataavailable = (event) => {
+      console.log("on data available");
+      console.log("Binary stream available", event.data);
+      //Send stream to backend
+      socket.emit("binarystream", event.data);
+    };
+    mediaRecorder.start(25);
+  };
 
   const handleYouTubeClick = () => {
     setIsYouTubeSelected((prevState) => !prevState);
@@ -49,7 +80,9 @@ function Dashboard() {
           />
         </div>
         {isYouTubeSelected && (
-          <button className="start-stream-btn">Start Stream</button>
+          <button className="start-stream-btn" onClick={startLiveStreamHandler}>
+            Start Stream
+          </button>
         )}
       </div>
     </div>
