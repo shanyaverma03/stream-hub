@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 
 import Header from "../components/Header";
 import "./Dashboard.css";
-import youTubeLogo from "../assets/ytLogo.png";
+import youTubeLogo from "../assets/youTubeLogo.png";
 
 const socket = io("http://localhost:8000");
 
@@ -75,7 +75,7 @@ function Dashboard() {
           <img
             src={youTubeLogo}
             alt="YouTube Logo"
-            className="youtube-logo"
+            className={`youtube-logo ${isYouTubeSelected ? "selected" : ""}`}
             onClick={handleYouTubeClick}
           />
         </div>
