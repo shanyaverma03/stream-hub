@@ -1,11 +1,25 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import "./Auth.css";
+import { registerRoute } from "../utils/APIRoutes";
 
 const Register = () => {
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "dark",
+  };
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -16,14 +30,61 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleValidation = () => {
+    const { username, email, password, confirmPassword } = formData;
+
+    if (password !== confirmPassword) {
+      toast.error(
+        "Password and confirm password should be same.",
+        toastOptions
+      );
+      return false;
+    } else if (username.length < 3) {
+      toast.error(
+        "Username should be greater than 3 characters.",
+        toastOptions
+      );
+      return false;
+    } else if (password.length < 8) {
+      toast.error(
+        "Password should be equal or greater than 8 characters.",
+        toastOptions
+      );
+      return false;
+    } else if (email === "") {
+      toast.error("Email is required.", toastOptions);
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form data submitted:", formData);
-    setFormData({
-      username: "",
-      email: "",
-      password: "",
-    });
+    if (handleValidation()) {
+      try {
+        const { data } = await axios.post(registerRoute, {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (data.status === false) {
+          toast.error(data.msg, toastOptions);
+        }
+        if (data.status === true) {
+          console.log("User created");
+        }
+      } catch (err) {
+        toast.error("Some error occured", toastOptions);
+      }
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
   };
 
   return (
@@ -63,10 +124,22 @@ const Register = () => {
             required
           />
         </div>
+        <div className="form-group">
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirm password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <button type="submit" className="auth-btn">
           Register
         </button>
       </form>
+      <ToastContainer />
     </div>
   );
 };

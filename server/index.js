@@ -3,6 +3,9 @@ const cors = require("cors");
 const http = require("http");
 const socket = require("socket.io");
 const { spawn } = require("child_process");
+const mongoose = require("mongoose");
+
+const authRoutes = require("./routes/authRoutes");
 
 require("dotenv").config();
 
@@ -12,6 +15,21 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
+app.use(express.json());
+
+app.use("/api/auth", authRoutes);
+
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("DB Connection Successfull");
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
 
 const server = http.createServer(app);
 const io = socket(server, {
