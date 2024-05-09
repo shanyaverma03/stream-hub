@@ -1,7 +1,23 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+
 import "./Auth.css";
+import { loginRoute } from "../utils/APIRoutes";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "dark",
+  };
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -15,13 +31,35 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleValidation = () => {
+    const { username, password } = formData;
+
+    if (password === "") {
+      toast.error("Password is required", toastOptions);
+      return false;
+    } else if (username.length === "") {
+      toast.error("Username is required", toastOptions);
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form data submitted:", formData);
-    setFormData({
-      username: "",
-      password: "",
-    });
+    if (handleValidation()) {
+      const { data } = await axios.post(loginRoute, {
+        username: formData.username,
+        password: formData.password,
+      });
+
+      if (data.status === false) {
+        toast.error(data.msg, toastOptions);
+      }
+      if (data.status === true) {
+        localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+        navigate("/dashboard");
+      }
+    }
   };
 
   return (
@@ -54,7 +92,11 @@ const Login = () => {
         <button type="submit" className="auth-btn">
           Login
         </button>
+        <span>
+          Don't have an account ? <Link to="/register">Register</Link>
+        </span>
       </form>
+      <ToastContainer />
     </div>
   );
 };

@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate, Link } from "react-router-dom";
 
 import "./Auth.css";
 import { registerRoute } from "../utils/APIRoutes";
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
@@ -75,15 +78,11 @@ const Register = () => {
         if (data.status === true) {
           console.log("User created");
         }
+
+        navigate("/dashboard");
       } catch (err) {
         toast.error("Some error occured", toastOptions);
       }
-      setFormData({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
     }
   };
 
@@ -138,6 +137,9 @@ const Register = () => {
         <button type="submit" className="auth-btn">
           Register
         </button>
+        <span>
+          Already have an account ? <Link to="/login">Login.</Link>
+        </span>
       </form>
       <ToastContainer />
     </div>

@@ -1,9 +1,10 @@
 .auth-page {
+  height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   background: #f4f4f4;
   font-family: Arial, sans-serif;
 }
@@ -15,17 +16,12 @@ h1 {
 }
 
 .auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  border-radius: 2rem;
+  padding: 3rem 5rem;
   background: #fff;
-  padding: 4rem;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 40%;
-  text-align: center;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-  text-align: left;
 }
 
 .form-group label {
@@ -56,4 +52,15 @@ h1 {
 
 .auth-btn:hover {
   background: #0056b3;
+}
+
+span {
+  margin: 0;
+  color: #333;
+  text-transform: uppercase;
+  a {
+    color: #d6536d;
+    text-decoration: none;
+    font-weight: bold;
+  }
 }
