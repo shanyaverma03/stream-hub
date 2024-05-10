@@ -4,18 +4,35 @@ const http = require("http");
 const socket = require("socket.io");
 const { spawn } = require("child_process");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
 const authRoutes = require("./routes/authRoutes");
 
 require("dotenv").config();
 
 const app = express();
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URL,
+  collections: "sessions",
+});
+
 app.use(
   cors({
     origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 app.use(express.json());
+
+app.use(
+  session({
+    secret: "this is my secret",
+    resave: false,
+    saveUninitialized: false,
+    store,
+  })
+);
 
 app.use("/api/auth", authRoutes);
 

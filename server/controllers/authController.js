@@ -31,7 +31,6 @@ module.exports.register = async (req, res, next) => {
 module.exports.login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
-
     const user = await User.findOne({ username });
     if (!user)
       return res.json({ msg: "Incorrect Username or Password", status: false });
@@ -41,8 +40,21 @@ module.exports.login = async (req, res, next) => {
       return res.json({ msg: "Incorrect Username or Password", status: false });
     delete user.password;
 
-    return res.json({ status: true, user });
+    req.session.isLoggedIn = true;
+    req.session.user = { id: user._id, username: user.username };
+
+    return res.json({
+      status: true,
+      user: { id: user._id, username: user.username },
+    });
   } catch (error) {
     next(error);
   }
+};
+
+module.exports.checkSession = async (req, res) => {
+  if (req.session.isLoggedIn) {
+    return res.json({ status: true, user: req.session.user });
+  }
+  return res.json({ status: false });
 };

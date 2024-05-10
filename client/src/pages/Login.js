@@ -47,16 +47,21 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (handleValidation()) {
-      const { data } = await axios.post(loginRoute, {
-        username: formData.username,
-        password: formData.password,
-      });
+      const { data } = await axios.post(
+        loginRoute,
+        {
+          username: formData.username,
+          password: formData.password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       }
       if (data.status === true) {
-        localStorage.setItem("chat-app-user", JSON.stringify(data.user));
         navigate("/dashboard");
       }
     }
