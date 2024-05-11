@@ -66,20 +66,22 @@ const Register = () => {
     e.preventDefault();
     if (handleValidation()) {
       try {
-        const { data } = await axios.post(registerRoute, {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        });
+        const { data } = await axios.post(
+          registerRoute,
+          {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+          },
+          { withCredentials: true }
+        );
 
         if (data.status === false) {
           toast.error(data.msg, toastOptions);
         }
         if (data.status === true) {
-          console.log("User created");
+          navigate("/dashboard");
         }
-
-        navigate("/dashboard");
       } catch (err) {
         toast.error("Some error occured", toastOptions);
       }

@@ -22,6 +22,10 @@ module.exports.register = async (req, res, next) => {
       password: hashedPassword,
     });
     delete user.password;
+
+    req.session.isLoggedIn = true;
+    req.session.user = user._id;
+
     return res.json({ status: true, user });
   } catch (error) {
     next(error);
@@ -52,9 +56,15 @@ module.exports.login = async (req, res, next) => {
   }
 };
 
-module.exports.checkSession = async (req, res) => {
+module.exports.checkSession = (req, res, next) => {
   if (req.session.isLoggedIn) {
-    return res.json({ status: true, user: req.session.user });
+    return res.json({
+      isLoggedIn: true,
+      user: req.session.user,
+    });
+  } else {
+    return res.json({
+      isLoggedIn: false,
+    });
   }
-  return res.json({ status: false });
 };

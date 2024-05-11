@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { io } from "socket.io-client";
+import "react-toastify/dist/ReactToastify.css";
 
 import Header from "../components/Header";
 import "./Dashboard.css";
 import youTubeLogo from "../assets/youTubeLogo.png";
+import { UserContext } from "../store/user-context";
 
 const socket = io("http://localhost:8000");
 
@@ -11,6 +13,7 @@ function Dashboard() {
   const [isYouTubeSelected, setIsYouTubeSelected] = useState(false);
   const [media, setMedia] = useState(null);
   const videoRef = useRef(null);
+  const { isLoggedIn } = useContext(UserContext);
 
   const getUserMedia = async () => {
     try {
