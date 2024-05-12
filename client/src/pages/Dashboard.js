@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { io } from "socket.io-client";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 import Header from "../components/Header";
 import "./Dashboard.css";
@@ -14,6 +15,7 @@ function Dashboard() {
   const [media, setMedia] = useState(null);
   const videoRef = useRef(null);
   const { isLoggedIn } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const getUserMedia = async () => {
     try {
@@ -31,6 +33,9 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/login");
+    }
     socket.on("connect", () => {
       console.log("Socket connected", socket.id);
     });
@@ -42,7 +47,7 @@ function Dashboard() {
         socket.close();
       }
     };
-  }, []);
+  }, [isLoggedIn, navigate]);
 
   const startLiveStreamHandler = () => {
     //Record stream in real time and convert to binary
