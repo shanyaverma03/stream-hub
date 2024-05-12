@@ -68,3 +68,13 @@ module.exports.checkSession = (req, res, next) => {
     });
   }
 };
+
+module.exports.logout = (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.clearCookie("connect.sid");
+    res.json({ status: true, msg: "Logged out successfully" });
+  });
+};

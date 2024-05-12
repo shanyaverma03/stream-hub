@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
@@ -14,7 +15,7 @@ require("dotenv").config();
 const app = express();
 const store = new MongoDBStore({
   uri: process.env.MONGO_URL,
-  collections: "sessions",
+  collection: "sessions",
 });
 
 app.use(
@@ -27,10 +28,11 @@ app.use(express.json());
 
 app.use(
   session({
-    secret: "this is my secret",
+    secret: process.env.EXPRESS_SESSION_SECRET || "defaultSecret",
     resave: false,
     saveUninitialized: false,
     store,
+    unset: "destroy",
   })
 );
 
