@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,9 +6,11 @@ import { useNavigate, Link } from "react-router-dom";
 
 import "./Auth.css";
 import { registerRoute } from "../utils/APIRoutes";
+import { UserContext } from "../store/user-context";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { setIsLoggedIn, setUser } = useContext(UserContext);
 
   const toastOptions = {
     position: "bottom-right",
@@ -80,6 +82,8 @@ const Register = () => {
           toast.error(data.msg, toastOptions);
         }
         if (data.status === true) {
+          setIsLoggedIn(true);
+          setUser(data.user);
           navigate("/dashboard");
         }
       } catch (err) {

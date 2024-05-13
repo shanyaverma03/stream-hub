@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,9 +6,11 @@ import axios from "axios";
 
 import "./Auth.css";
 import { loginRoute } from "../utils/APIRoutes";
+import { UserContext } from "../store/user-context";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setIsLoggedIn, setUser } = useContext(UserContext);
 
   const toastOptions = {
     position: "bottom-right",
@@ -43,27 +45,32 @@ const Login = () => {
     }
     return true;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (handleValidation()) {
-      const { data } = await axios.post(
-        loginRoute,
-        {
-          username: formData.username,
-          password: formData.password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+    try {
+      if (handleValidation()) {
+        const { data } = await axios.post(
+          loginRoute,
+          {
+            username: formData.username,
+            password: formData.password,
+          },
+          {
+            withCredentials: true,
+          }
+        );
 
-      if (data.status === false) {
-        toast.error(data.msg, toastOptions);
+        if (data.status === false) {
+          toast.error(data.msg, toastOptions);
+        }
+        if (data.status === true) {
+          setIsLoggedIn(true);
+          setUser(data.user);
+          navigate("/dashboard");
+        }
       }
-      if (data.status === true) {
-        navigate("/dashboard");
-      }
+    } catch (err) {
+      toast.error(err, toastOptions);
     }
   };
 
