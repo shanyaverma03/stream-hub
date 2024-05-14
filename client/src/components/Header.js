@@ -18,9 +18,12 @@ function Header() {
         {},
         { withCredentials: true }
       );
-      setIsLoggedIn(false);
-      setUser({});
-      navigate("/");
+      if (data) {
+        localStorage.setItem("isLoggedIn", "false");
+        setIsLoggedIn(false);
+        setUser({});
+        navigate("/");
+      }
     } catch (err) {
       console.log(err);
     }

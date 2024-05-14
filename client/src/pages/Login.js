@@ -45,6 +45,7 @@ const Login = () => {
     }
     return true;
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -64,6 +65,7 @@ const Login = () => {
           toast.error(data.msg, toastOptions);
         }
         if (data.status === true) {
+          localStorage.setItem("isLoggedIn", "true");
           setIsLoggedIn(true);
           setUser(data.user);
           navigate("/dashboard");

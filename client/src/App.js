@@ -18,7 +18,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  let initial = "false";
+  if (localStorage.getItem("isLoggedIn")) {
+    initial = "true";
+  }
+
+  const [isLoggedIn, setIsLoggedIn] = useState(initial);
   const [user, setUser] = useState({});
 
   const checkUser = async () => {
@@ -26,8 +31,12 @@ function App() {
       const { data } = await axios.get(checkSessionRoute, {
         withCredentials: true,
       });
-      setIsLoggedIn(data.isLoggedIn);
-      setUser(data.user);
+      if (data.isLoggedIn) {
+        setIsLoggedIn(data.isLoggedIn);
+      }
+      if (data.user) {
+        setUser(data.user);
+      }
     } catch (error) {
       console.error("Error checking session", error);
     }
