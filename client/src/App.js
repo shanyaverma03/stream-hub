@@ -18,12 +18,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  let initial = "false";
+  let initialLoggedIn = "false";
   if (localStorage.getItem("isLoggedIn")) {
-    initial = "true";
+    initialLoggedIn = "true";
   }
 
-  const [isLoggedIn, setIsLoggedIn] = useState(initial);
+  const [isLoggedIn, setIsLoggedIn] = useState(initialLoggedIn);
   const [user, setUser] = useState({});
 
   const checkUser = async () => {
