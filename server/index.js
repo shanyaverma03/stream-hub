@@ -9,6 +9,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 
 const authRoutes = require("./routes/authRoutes");
+const destinationRoutes = require("./routes/destinationRoutes");
 
 require("dotenv").config();
 
@@ -33,10 +34,15 @@ app.use(
     saveUninitialized: false,
     store,
     unset: "destroy",
+    cookie: {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    },
   })
 );
 
 app.use("/api/auth", authRoutes);
+app.use("/api/destinations", destinationRoutes);
 
 mongoose
   .connect(process.env.MONGO_URL, {

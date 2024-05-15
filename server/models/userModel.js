@@ -19,6 +19,9 @@ const userSchema = new mongoose.Schema({
     required: true,
     min: 8,
   },
+  destinations: {
+    type: Array,
+  },
 });
 
 module.exports = mongoose.model("Users", userSchema);
