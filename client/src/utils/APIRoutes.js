@@ -5,3 +5,4 @@ export const checkSessionRoute = `${host}/api/auth/check-session`;
 export const logoutRoute = `${host}/api/auth/logout`;
 
 export const getDestinationsRoute = `${host}/api/destinations`;
+export const addDestinationRoute = `${host}/api/destinations/add`;

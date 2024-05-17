@@ -1,7 +1,12 @@
 const router = require("express").Router();
 
-const { getDestinations } = require("../controllers/destinationController");
+const {
+  getDestinations,
+  addDestination,
+} = require("../controllers/destinationController");
 
-router.get("/:id", getDestinations);
+router.get("/:userId", getDestinations);
+
+router.post("/add/:userId", addDestination);
 
 module.exports = router;

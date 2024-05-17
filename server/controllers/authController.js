@@ -20,7 +20,7 @@ module.exports.register = async (req, res, next) => {
       email,
       username,
       password: hashedPassword,
-      destinations: [],
+      destinations: [{}],
     });
     delete user.password;
 

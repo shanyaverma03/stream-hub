@@ -19,9 +19,18 @@ const userSchema = new mongoose.Schema({
     required: true,
     min: 8,
   },
-  destinations: {
-    type: Array,
-  },
+  destinations: [
+    {
+      channel: {
+        type: String,
+        required: true,
+      },
+      apiKey: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
-module.exports = mongoose.model("Users", userSchema);
+module.exports = mongoose.model("User", userSchema);

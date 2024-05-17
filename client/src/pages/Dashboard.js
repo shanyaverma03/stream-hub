@@ -1,22 +1,58 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { io } from "socket.io-client";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Modal from "react-modal";
 
 import Header from "../components/Header";
 import "./Dashboard.css";
-import youTubeLogo from "../assets/youTubeLogo.png";
+import YouTube from "../assets/youTubeLogo.png";
 import loader from "../assets/loader.gif";
+import addDestinationLogo from "../assets/add-icon.svg";
 import { UserContext } from "../store/user-context";
+import { getDestinationsRoute, addDestinationRoute } from "../utils/APIRoutes";
 
 const socket = io("http://localhost:8000");
 
+const toastOptions = {
+  position: "bottom-right",
+  autoClose: 8000,
+  pauseOnHover: true,
+  draggable: true,
+  theme: "dark",
+};
+
+//modal styles
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "50%",
+    height: "50%",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
+  },
+};
+
+Modal.setAppElement("#root");
+
 function Dashboard() {
-  const [isYouTubeSelected, setIsYouTubeSelected] = useState(false);
+  const [isDestinationSelected, setIsDestinatonSelected] = useState(false);
   const [media, setMedia] = useState(null);
   const [isUserMediaLoading, setIsUserMediaLoading] = useState(null);
+  const [destinations, setDestinations] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedDestination, setSelectedDestination] = useState(null);
+  const [apiKey, setApiKey] = useState("");
   const videoRef = useRef(null);
-  const { isLoggedIn } = useContext(UserContext);
+  const { isLoggedIn, user } = useContext(UserContext);
   const navigate = useNavigate();
 
   const getUserMedia = async () => {
@@ -40,6 +76,9 @@ function Dashboard() {
     if (!isLoggedIn) {
       navigate("/login");
     }
+  }, [isLoggedIn, navigate]);
+
+  useEffect(() => {
     socket.on("connect", () => {
       console.log("Socket connected", socket.id);
     });
@@ -51,7 +90,24 @@ function Dashboard() {
         socket.close();
       }
     };
-  }, [isLoggedIn, navigate]);
+  }, []);
+
+  useEffect(() => {
+    const getDestinations = async () => {
+      try {
+        console.log(user.id);
+        const { data } = await axios.get(`${getDestinationsRoute}/${user.id}`);
+        console.log(data);
+        if (data.destinations) {
+          setDestinations(data.destinations);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getDestinations();
+  }, [user]);
 
   const startLiveStreamHandler = () => {
     //Record stream in real time and convert to binary
@@ -69,8 +125,53 @@ function Dashboard() {
     mediaRecorder.start(25);
   };
 
-  const handleYouTubeClick = () => {
-    setIsYouTubeSelected((prevState) => !prevState);
+  const destinationSelectHandler = () => {
+    setIsDestinatonSelected((prevState) => !prevState);
+  };
+
+  const addNewDestinationHandler = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const addDestinationHandler = (destination) => {
+    setSelectedDestination(destination);
+  };
+
+  const apiKeyChangeHandler = (e) => {
+    setApiKey(e.target.value);
+  };
+
+  const destinationSubmitHandler = async (e) => {
+    e.preventDefault();
+    if (
+      destinations.some(
+        (destination) => destination.channel === selectedDestination
+      )
+    ) {
+      toast.error("You have already added that!", toastOptions);
+      return;
+    }
+    try {
+      const newDestination = {
+        userId: user.id,
+        channel: selectedDestination,
+        apiKey,
+      };
+      const { data } = await axios.post(
+        `${addDestinationRoute}/${user.id}`,
+        newDestination
+      );
+      if (data) {
+        setDestinations([...destinations, newDestination]);
+        closeModal();
+      }
+    } catch (err) {
+      console.error("Error adding destination", err);
+    }
   };
 
   return (
@@ -88,19 +189,90 @@ function Dashboard() {
         )}
         <h2>Select Destinations</h2>
         <div className="destinations">
-          <img
-            src={youTubeLogo}
-            alt="YouTube Logo"
-            className={`youtube-logo ${isYouTubeSelected ? "selected" : ""}`}
-            onClick={handleYouTubeClick}
-          />
+          {destinations.length === 0 ? (
+            <button
+              className="add-destination-btn"
+              onClick={addNewDestinationHandler}
+            >
+              + Add a destination
+            </button>
+          ) : (
+            <>
+              {destinations.map((destination, index) => (
+                <img
+                  key={index}
+                  src={destination.channel === "YouTube" ? YouTube : ""}
+                  alt="Channel Logo"
+                  className={`destination-logo ${
+                    isDestinationSelected ? "selected" : ""
+                  }`}
+                  onClick={destinationSelectHandler}
+                />
+              ))}
+              <div className="destination-container">
+                <img
+                  src={addDestinationLogo}
+                  className="add-destination-logo"
+                  alt="add destination logo"
+                  onClick={addNewDestinationHandler}
+                />
+                <span className="tooltip-text">Add a new destination</span>
+              </div>
+            </>
+          )}
         </div>
-        {isYouTubeSelected && (
+        {isDestinationSelected && (
           <button className="start-stream-btn" onClick={startLiveStreamHandler}>
             Start Stream
           </button>
         )}
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Add Destination Modal"
+      >
+        <h2>Add a Destination</h2>
+        <div className="destination-options">
+          <button
+            className={selectedDestination === "YouTube" ? "selected" : ""}
+            onClick={() => addDestinationHandler("YouTube")}
+          >
+            YouTube
+          </button>
+          <button
+            className={selectedDestination === "Facebook" ? "selected" : ""}
+            onClick={() => addDestinationHandler("Facebook")}
+          >
+            Facebook
+          </button>
+        </div>
+        <form onSubmit={destinationSubmitHandler}>
+          <div className="form-group">
+            <label htmlFor="APIKey">API Key</label>
+            <input
+              type="text"
+              id="apiKey"
+              name="apiKey"
+              value={apiKey}
+              onChange={apiKeyChangeHandler}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="auth-btn"
+            disabled={!selectedDestination || apiKey.trim().length === 0}
+          >
+            Add
+          </button>
+          <button type="button" onClick={closeModal}>
+            Close
+          </button>
+        </form>
+        <ToastContainer />
+      </Modal>
     </div>
   );
 }

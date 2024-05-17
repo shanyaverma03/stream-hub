@@ -31,6 +31,7 @@
 .card h2 {
   font-size: 1.5rem;
   color: #333;
+  margin-bottom: 0.5rem;
 }
 
 .destinations {
@@ -39,18 +40,23 @@
   align-items: center;
 }
 
-.youtube-logo {
+.destination-logo {
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.3s;
 }
 
-.youtube-logo:hover {
+.destination-logo:hover {
   transform: scale(1.1);
 }
 
-.youtube-logo.selected {
+.destination-logo.selected {
   border: 3px solid #007bff;
+}
+
+.add-destination-logo {
+  width: 40px;
+  margin-left: 1rem;
 }
 
 .start-stream-btn {
@@ -67,4 +73,127 @@
 
 .start-stream-btn:hover {
   background: #0056b3;
+}
+
+.add-destination-btn {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 1rem;
+}
+
+.add-destination-btn:hover {
+  background-color: #007bff;
+}
+
+.destination-options {
+  display: flex;
+  justify-content: space-around;
+  margin: 2rem;
+}
+
+.destination-options button {
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.destination-options button:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.destination-options button.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  border-radius: 2rem;
+  padding: 1rem;
+  background: #fff;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-group input {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.auth-btn {
+  font-size: 1.2rem;
+  padding: 1rem 0.5rem;
+  margin-top: 0;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  width: 40%;
+}
+
+.auth-btn:hover {
+  background: #0056b3;
+}
+
+.auth-btn:disabled {
+  background-color: #333;
+  cursor: not-allowed;
+}
+
+.destination-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 0.5rem;
+  position: absolute;
+  z-index: 1;
+  bottom: 120%;
+  left: 90%;
+  margin-left: -70px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.8rem;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Position the arrow below the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.destination-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
