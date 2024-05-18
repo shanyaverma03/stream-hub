@@ -5,19 +5,12 @@ const http = require("http");
 const socket = require("socket.io");
 const { spawn } = require("child_process");
 const mongoose = require("mongoose");
-const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
 
 const authRoutes = require("./routes/authRoutes");
 const destinationRoutes = require("./routes/destinationRoutes");
-
-require("dotenv").config();
+const User = require("./models/userModel");
 
 const app = express();
-const store = new MongoDBStore({
-  uri: process.env.MONGO_URL,
-  collection: "sessions",
-});
 
 app.use(
   cors({
@@ -26,20 +19,6 @@ app.use(
   })
 );
 app.use(express.json());
-
-app.use(
-  session({
-    secret: process.env.EXPRESS_SESSION_SECRET || "defaultSecret",
-    resave: false,
-    saveUninitialized: false,
-    store,
-    unset: "destroy",
-    cookie: {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    },
-  })
-);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/destinations", destinationRoutes);

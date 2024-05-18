@@ -1,81 +1,95 @@
 const bcrypt = require("bcrypt");
 
 const User = require("../models/userModel");
+const { createJSONToken } = require("../util/auth");
+const { isValidEmail, isValidText } = require("../util/validation");
 
 module.exports.register = async (req, res, next) => {
+  const { username, email, password } = req.body;
+  let errors = {};
+
+  if (!isValidText(username, 3)) {
+    errors.username = "Invalid username!";
+  } else {
+    try {
+      const usernameCheck = await User.findOne({ username });
+      if (usernameCheck) {
+        errors.username = "Username already exists!";
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  if (!isValidEmail(email)) {
+    errors.email = "Invalid email!";
+  } else {
+    try {
+      const emailCheck = await User.findOne({ email });
+      if (emailCheck) {
+        errors.email = "Email already exists!";
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  if (!isValidText(password, 8)) {
+    errors.password = "Invalid password. Must be at least 8 characters long.";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return res.status(422).json({
+      message: "User signup failed due to validation errors.",
+      errors,
+    });
+  }
+
   try {
-    const { username, email, password } = req.body;
-
-    const usernameCheck = await User.findOne({ username });
-    if (usernameCheck)
-      return res.json({ msg: "Username already used", status: false });
-
-    const emailCheck = await User.findOne({ email });
-    if (emailCheck)
-      return res.json({ msg: "Email already exists", status: false });
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       email,
       username,
       password: hashedPassword,
-      destinations: [{}],
+      destinations: [],
     });
     delete user.password;
 
-    req.session.isLoggedIn = true;
-    req.session.user = user._id;
-
-    return res.json({ status: true, user });
-  } catch (error) {
-    next(error);
+    const authToken = createJSONToken(user.username);
+    res.status(201).json({
+      message: "User created.",
+      user: { id: user._id, username: user.username },
+      token: authToken,
+    });
+  } catch (err) {
+    console.log(err);
   }
 };
 
 module.exports.login = async (req, res, next) => {
+  const { username, password } = req.body;
+
   try {
-    const { username, password } = req.body;
     const user = await User.findOne({ username });
     if (!user)
-      return res.json({ msg: "Incorrect Username or Password", status: false });
+      return res.status(401).json({ message: "Authentication failed." });
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
-      return res.json({ msg: "Incorrect Username or Password", status: false });
+      return res.status(422).json({
+        message: "Invalid credentials.",
+        errors: { credentials: "Invalid email or password entered." },
+      });
     delete user.password;
 
-    req.session.isLoggedIn = true;
-    req.session.user = { id: user._id, username: user.username };
+    const token = createJSONToken(username);
 
-    return res.json({
-      status: true,
+    res.json({
       user: { id: user._id, username: user.username },
+      token,
     });
   } catch (error) {
     next(error);
   }
-};
-
-module.exports.checkSession = (req, res, next) => {
-  if (req.session.isLoggedIn) {
-    return res.json({
-      isLoggedIn: true,
-      user: req.session.user,
-    });
-  } else {
-    return res.json({
-      isLoggedIn: false,
-    });
-  }
-};
-
-module.exports.logout = (req, res, next) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.clearCookie("connect.sid");
-    res.json({ status: true, msg: "Logged out successfully" });
-  });
 };

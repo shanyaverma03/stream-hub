@@ -23,11 +23,9 @@ const userSchema = new mongoose.Schema({
     {
       channel: {
         type: String,
-        required: true,
       },
       apiKey: {
         type: String,
-        required: true,
       },
     },
   ],

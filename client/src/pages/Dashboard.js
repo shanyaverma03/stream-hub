@@ -13,6 +13,7 @@ import loader from "../assets/loader.gif";
 import addDestinationLogo from "../assets/add-icon.svg";
 import { UserContext } from "../store/user-context";
 import { getDestinationsRoute, addDestinationRoute } from "../utils/APIRoutes";
+import { getAuthToken } from "../utils/auth";
 
 const socket = io("http://localhost:8000");
 
@@ -94,12 +95,22 @@ function Dashboard() {
 
   useEffect(() => {
     const getDestinations = async () => {
+      const token = getAuthToken();
       try {
         console.log(user.id);
-        const { data } = await axios.get(`${getDestinationsRoute}/${user.id}`);
-        console.log(data);
-        if (data.destinations) {
-          setDestinations(data.destinations);
+        if (user.id) {
+          const { data } = await axios.get(
+            `${getDestinationsRoute}/${user.id}`,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
+
+          if (data.destinations) {
+            setDestinations(data.destinations);
+          }
         }
       } catch (err) {
         console.log(err);
@@ -161,9 +172,15 @@ function Dashboard() {
         channel: selectedDestination,
         apiKey,
       };
+      const token = getAuthToken();
       const { data } = await axios.post(
         `${addDestinationRoute}/${user.id}`,
-        newDestination
+        newDestination,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       if (data) {
         setDestinations([...destinations, newDestination]);

@@ -4,6 +4,9 @@ const {
   getDestinations,
   addDestination,
 } = require("../controllers/destinationController");
+const { checkAuth } = require("../util/auth");
+
+router.use(checkAuth);
 
 router.get("/:userId", getDestinations);
 

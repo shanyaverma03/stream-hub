@@ -7,6 +7,7 @@ import axios from "axios";
 import "./Auth.css";
 import { loginRoute } from "../utils/APIRoutes";
 import { UserContext } from "../store/user-context";
+import { setAuthToken } from "../utils/auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -60,19 +61,16 @@ const Login = () => {
             withCredentials: true,
           }
         );
-
-        if (data.status === false) {
-          toast.error(data.msg, toastOptions);
-        }
-        if (data.status === true) {
-          localStorage.setItem("isLoggedIn", "true");
-          setIsLoggedIn(true);
-          setUser(data.user);
-          navigate("/dashboard");
-        }
+        setUser(data.user);
+        setAuthToken(data.token);
+        navigate("/dashboard");
       }
     } catch (err) {
-      toast.error(err, toastOptions);
+      if (err.response && err.response.data && err.response.data.message) {
+        toast.error(err.response.data.message, toastOptions);
+      } else {
+        toast.error(err.message, toastOptions);
+      }
     }
   };
 

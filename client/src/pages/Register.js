@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "./Auth.css";
 import { registerRoute } from "../utils/APIRoutes";
 import { UserContext } from "../store/user-context";
+import { setAuthToken } from "../utils/auth";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -78,17 +79,17 @@ const Register = () => {
           { withCredentials: true }
         );
 
-        if (data.status === false) {
-          toast.error(data.msg, toastOptions);
-        }
-        if (data.status === true) {
-          localStorage.setItem("isLoggedIn", "true");
-          setIsLoggedIn(true);
-          setUser(data.user);
-          navigate("/dashboard");
-        }
+        setUser(data.user);
+        const token = data.token;
+        setAuthToken(token);
+
+        navigate("/dashboard");
       } catch (err) {
-        toast.error("Some error occured", toastOptions);
+        if (err.response && err.response.data && err.response.data.message) {
+          toast.error(err.response.data.message, toastOptions);
+        } else {
+          toast.error(err.message, toastOptions);
+        }
       }
     }
   };
