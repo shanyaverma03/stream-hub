@@ -1,32 +1,19 @@
 import React, { useContext } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import logo from "../assets/streamLogo.png";
 import "./Header.css";
-import { logoutRoute } from "../utils/APIRoutes";
 import { UserContext } from "../store/user-context";
 
 function Header() {
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn, setUser } = useContext(UserContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
 
   const logoutHandler = async () => {
-    try {
-      const { data } = await axios.post(
-        logoutRoute,
-        {},
-        { withCredentials: true }
-      );
-      if (data) {
-        localStorage.setItem("isLoggedIn", "false");
-        setIsLoggedIn(false);
-        setUser({});
-        navigate("/");
-      }
-    } catch (err) {
-      console.log(err);
-    }
+    // localStorage.removeItem("token");
+    setIsLoggedIn(false);
+
+    navigate("/");
   };
 
   return (

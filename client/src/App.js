@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -8,47 +8,50 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { UserContext } from "./store/user-context";
-import { checkSessionRoute } from "./utils/APIRoutes";
 
-const router = createBrowserRouter([
-  { path: "/", element: <Home /> },
-  { path: "/register", element: <Register /> },
-  { path: "/login", element: <Login /> },
-  { path: "/dashboard", element: <Dashboard /> },
-]);
+import { getAuthToken, getHeaders } from "./utils/auth";
+import { PrivateRoutes, AuthRoutes } from "./pages/ConditionalRoutes";
+import { validateInitialRequestRoute } from "./utils/APIRoutes";
 
 function App() {
-  let initialLoggedIn = "false";
-  if (localStorage.getItem("isLoggedIn")) {
-    initialLoggedIn = "true";
-  }
-
-  const [isLoggedIn, setIsLoggedIn] = useState(initialLoggedIn);
-  const [user, setUser] = useState({});
-
-  const checkUser = async () => {
-    try {
-      const { data } = await axios.get(checkSessionRoute, {
-        withCredentials: true,
-      });
-      if (data.isLoggedIn) {
-        setIsLoggedIn(data.isLoggedIn);
-      }
-      if (data.user) {
-        setUser(data.user);
-      }
-    } catch (error) {
-      console.error("Error checking session", error);
-    }
-  };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    const checkUser = async () => {
+      try {
+        if (getAuthToken()) {
+          const response = await axios.get(
+            validateInitialRequestRoute,
+            getHeaders()
+          );
+          if (response.status === 200) {
+            setIsLoggedIn(true);
+          } else {
+            setIsLoggedIn(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking session", error);
+      }
+    };
+
     checkUser();
   }, []);
 
   return (
-    <UserContext.Provider value={{ isLoggedIn, user, setIsLoggedIn, setUser }}>
-      <RouterProvider router={router} />
+    <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+      <Router>
+        <Routes>
+          <Route element={<PrivateRoutes />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route element={<AuthRoutes />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
     </UserContext.Provider>
   );
 }
