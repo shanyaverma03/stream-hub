@@ -4,26 +4,21 @@ const User = require("../models/userModel");
 
 module.exports.getDestinations = async (req, res, next) => {
   try {
-    const { userId } = req.params;
-
-    const user = await User.findById(userId).select("destinations");
-
-    if (!user) {
-      return res.status(404).json({ msg: "User not found" });
-    }
-
-    return res.json({ destinations: user.destinations });
+    const { user } = req;
+    res.status(200).json({ destinations: user.destinations });
   } catch (error) {
     next(error);
   }
 };
 
-exports.addDestination = async (req, res) => {
-  const { userId, channel, apiKey } = req.body;
+module.exports.addDestination = async (req, res) => {
+  const { channel, apiKey } = req.body;
   const hashedAPIKey = await bcrypt.hash(apiKey, 10);
   try {
-    const user = await User.findByIdAndUpdate(
-      userId,
+    const { user } = req;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
       {
         $push: {
           destinations: { channel, apiKey: hashedAPIKey },
@@ -32,11 +27,7 @@ exports.addDestination = async (req, res) => {
       { new: true }
     );
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json(user);
+    res.status(201).json({ updatedDestinations: updatedUser.destinations });
   } catch (error) {
     console.error("Error adding destination", error);
     res.status(500).json({ message: "Server Error" });

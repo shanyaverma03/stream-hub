@@ -1,10 +1,10 @@
 const router = require("express").Router();
 
-const { addDestination } = require("../controllers/destinationController");
+const { getDestinations } = require("../controllers/destinationController");
 const { checkAuth } = require("../util/auth");
 
 router.use(checkAuth);
 
-router.post("/", addDestination);
+router.get("/", getDestinations);
 
 module.exports = router;

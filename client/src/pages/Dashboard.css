@@ -44,6 +44,7 @@
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.3s;
+  width: 50px;
 }
 
 .destination-logo:hover {

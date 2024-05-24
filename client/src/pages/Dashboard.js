@@ -9,11 +9,13 @@ import Modal from "react-modal";
 import Header from "../components/Header";
 import "./Dashboard.css";
 import YouTube from "../assets/youTubeLogo.png";
+import Facebook from "../assets/facebookLogo.png";
 import loader from "../assets/loader.gif";
+import destinationLoader from "../assets/destinationLoader.gif";
 import addDestinationLogo from "../assets/add-icon.svg";
 import { UserContext } from "../store/user-context";
 import { getDestinationsRoute, addDestinationRoute } from "../utils/APIRoutes";
-import { getAuthToken } from "../utils/auth";
+import { getHeaders } from "../utils/auth";
 
 const socket = io("http://localhost:8000");
 
@@ -47,13 +49,17 @@ Modal.setAppElement("#root");
 function Dashboard() {
   const [isDestinationSelected, setIsDestinatonSelected] = useState(false);
   const [media, setMedia] = useState(null);
-  const [isUserMediaLoading, setIsUserMediaLoading] = useState(null);
+  const [isUserMediaLoading, setIsUserMediaLoading] = useState(false);
   const [destinations, setDestinations] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [apiKey, setApiKey] = useState("");
+  const [isDestinationsLoading, setIsDestinationsLoading] = useState(false);
+
   const videoRef = useRef(null);
-  const { isLoggedIn, user } = useContext(UserContext);
+
+  const { isLoggedIn } = useContext(UserContext);
+
   const navigate = useNavigate();
 
   const getUserMedia = async () => {
@@ -74,12 +80,6 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/login");
-    }
-  }, [isLoggedIn, navigate]);
-
-  useEffect(() => {
     socket.on("connect", () => {
       console.log("Socket connected", socket.id);
     });
@@ -95,30 +95,21 @@ function Dashboard() {
 
   useEffect(() => {
     const getDestinations = async () => {
-      const token = getAuthToken();
+      setIsDestinationsLoading(true);
       try {
-        console.log(user.id);
-        if (user.id) {
-          const { data } = await axios.get(
-            `${getDestinationsRoute}/${user.id}`,
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            }
-          );
+        const { data } = await axios.get(getDestinationsRoute, getHeaders());
 
-          if (data.destinations) {
-            setDestinations(data.destinations);
-          }
+        if (data.destinations) {
+          setDestinations(data.destinations);
         }
+        setIsDestinationsLoading(false);
       } catch (err) {
         console.log(err);
       }
     };
 
     getDestinations();
-  }, [user]);
+  }, []);
 
   const startLiveStreamHandler = () => {
     //Record stream in real time and convert to binary
@@ -145,6 +136,8 @@ function Dashboard() {
   };
 
   const closeModal = () => {
+    setApiKey("");
+    setSelectedDestination("");
     setModalIsOpen(false);
   };
 
@@ -168,23 +161,25 @@ function Dashboard() {
     }
     try {
       const newDestination = {
-        userId: user.id,
         channel: selectedDestination,
         apiKey,
       };
-      const token = getAuthToken();
-      const { data } = await axios.post(
-        `${addDestinationRoute}/${user.id}`,
+
+      const response = await axios.post(
+        addDestinationRoute,
         newDestination,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
+        getHeaders()
       );
-      if (data) {
-        setDestinations([...destinations, newDestination]);
-        closeModal();
+      if (response.status === 201) {
+        console.log(response.data);
+        const { updatedDestinations } = response.data;
+        if (updatedDestinations) {
+          setDestinations(updatedDestinations);
+          setApiKey("");
+          closeModal();
+        } else {
+          toast.error("Some error in adding destination!", toastOptions);
+        }
       }
     } catch (err) {
       console.error("Error adding destination", err);
@@ -196,7 +191,7 @@ function Dashboard() {
       <Header />
       <div className="card">
         <h1>Create a Live Stream</h1>
-        {isUserMediaLoading && isUserMediaLoading ? (
+        {isUserMediaLoading ? (
           <img src={loader} alt="loader" />
         ) : (
           <video ref={videoRef} className="video-stream" autoPlay muted>
@@ -205,39 +200,50 @@ function Dashboard() {
           </video>
         )}
         <h2>Select Destinations</h2>
-        <div className="destinations">
-          {destinations.length === 0 ? (
-            <button
-              className="add-destination-btn"
-              onClick={addNewDestinationHandler}
-            >
-              + Add a destination
-            </button>
-          ) : (
-            <>
-              {destinations.map((destination, index) => (
-                <img
-                  key={index}
-                  src={destination.channel === "YouTube" ? YouTube : ""}
-                  alt="Channel Logo"
-                  className={`destination-logo ${
-                    isDestinationSelected ? "selected" : ""
-                  }`}
-                  onClick={destinationSelectHandler}
-                />
-              ))}
-              <div className="destination-container">
-                <img
-                  src={addDestinationLogo}
-                  className="add-destination-logo"
-                  alt="add destination logo"
-                  onClick={addNewDestinationHandler}
-                />
-                <span className="tooltip-text">Add a new destination</span>
-              </div>
-            </>
-          )}
-        </div>
+        {isDestinationsLoading ? (
+          <img src={destinationLoader} alt="loader" />
+        ) : (
+          <div className="destinations">
+            {destinations.length === 0 ? (
+              <button
+                className="add-destination-btn"
+                onClick={addNewDestinationHandler}
+              >
+                + Add a destination
+              </button>
+            ) : (
+              <>
+                {destinations.map((destination, index) => (
+                  <img
+                    key={index}
+                    src={
+                      destination.channel === "YouTube"
+                        ? YouTube
+                        : "" || destination.channel === "Facebook"
+                        ? Facebook
+                        : ""
+                    }
+                    alt="Channel Logo"
+                    className={`destination-logo ${
+                      isDestinationSelected ? "selected" : ""
+                    }`}
+                    onClick={destinationSelectHandler}
+                  />
+                ))}
+                <div className="destination-container">
+                  <img
+                    src={addDestinationLogo}
+                    className="add-destination-logo"
+                    alt="add destination logo"
+                    onClick={addNewDestinationHandler}
+                  />
+                  <span className="tooltip-text">Add a new destination</span>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         {isDestinationSelected && (
           <button className="start-stream-btn" onClick={startLiveStreamHandler}>
             Start Stream

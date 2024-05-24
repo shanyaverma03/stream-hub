@@ -2,7 +2,9 @@ const { sign, verify } = require("jsonwebtoken");
 
 require("dotenv").config();
 
-const KEY = process.env.KEY || "This is the default key";
+const KEY = process.env.KEY;
+
+const User = require("../models/userModel");
 
 function createJSONToken(username) {
   return sign({ username }, KEY, { expiresIn: "1h" });
@@ -12,27 +14,32 @@ function validateJSONToken(token) {
   return verify(token, KEY);
 }
 
-function checkAuthMiddleware(req, res, next) {
+async function checkAuthMiddleware(req, res, next) {
   if (req.method === "OPTIONS") {
     return next();
   }
   if (!req.headers.authorization) {
     console.log("NOT AUTH. AUTH HEADER MISSING.");
-    return res.json({ msg: "Not authenticated", status: false });
+    return res.status(401).json({ msg: "Not authorised", status: false });
   }
   const authFragments = req.headers.authorization.split(" ");
 
   if (authFragments.length !== 2) {
     console.log("NOT AUTH. AUTH HEADER INVALID.");
-    return res.json({ msg: "Not authenticated", status: false });
+    return res.status(401).json({ msg: "Not authorised", status: false });
   }
   const authToken = authFragments[1];
   try {
-    const validatedToken = validateJSONToken(authToken);
-    req.token = validatedToken;
+    const decoded = validateJSONToken(authToken);
+
+    const user = await User.findOne({ username: decoded.username });
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    req.user = user;
   } catch (error) {
-    console.log("NOT AUTH. TOKEN INVALID.");
-    return res.json({ msg: "Not authenticated", status: false });
+    console.error(error);
+    return res.status(401).json({ msg: "Not authorised", status: false });
   }
   next();
 }

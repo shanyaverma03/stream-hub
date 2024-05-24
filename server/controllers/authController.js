@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+require("dotenv").config();
 
 const User = require("../models/userModel");
 const { createJSONToken } = require("../util/auth");
@@ -59,7 +60,7 @@ module.exports.register = async (req, res, next) => {
     const authToken = createJSONToken(user.username);
     res.status(201).json({
       message: "User created.",
-      user: { id: user._id, username: user.username },
+      user: { userId: user._id, username: user.username },
       token: authToken,
     });
   } catch (err) {
@@ -84,12 +85,15 @@ module.exports.login = async (req, res, next) => {
     delete user.password;
 
     const token = createJSONToken(username);
-
     res.json({
-      user: { id: user._id, username: user.username },
+      user: { userId: user._id, username: user.username },
       token,
     });
   } catch (error) {
     next(error);
   }
+};
+
+module.exports.validateInitialRequest = async (req, res, next) => {
+  res.status(200).send("ok");
 };

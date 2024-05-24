@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/authRoutes");
 const destinationRoutes = require("./routes/destinationRoutes");
+const destinationsRoutes = require("./routes/destinationsRoutes");
 const User = require("./models/userModel");
 
 const app = express();
@@ -21,7 +22,8 @@ app.use(
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/destinations", destinationRoutes);
+app.use("/api/destinations", destinationsRoutes);
+app.use("/api/destination", destinationRoutes);
 
 mongoose
   .connect(process.env.MONGO_URL, {
