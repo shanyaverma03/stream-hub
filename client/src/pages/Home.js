@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./Home.css";
@@ -8,15 +8,12 @@ import { UserContext } from "../store/user-context";
 const Home = () => {
   const { isLoggedIn } = useContext(UserContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
+  const getStartedHandler = () => {
     if (isLoggedIn) {
       navigate("/dashboard");
+    } else {
+      navigate("/register");
     }
-  }, [isLoggedIn, navigate]);
-
-  const getStartedHandler = () => {
-    navigate("/register");
   };
 
   return (
