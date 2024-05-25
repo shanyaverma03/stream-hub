@@ -11,7 +11,7 @@ import { setAuthToken } from "../utils/auth";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setIsLoggedIn, setUser } = useContext(UserContext);
+  const { setIsLoggedIn } = useContext(UserContext);
 
   const toastOptions = {
     position: "bottom-right",
@@ -51,19 +51,18 @@ const Login = () => {
     e.preventDefault();
     try {
       if (handleValidation()) {
-        const { data } = await axios.post(
-          loginRoute,
-          {
-            username: formData.username,
-            password: formData.password,
-          },
-          {
-            withCredentials: true,
-          }
-        );
-        setUser(data.user);
-        setAuthToken(data.token);
-        navigate("/dashboard");
+        const { data } = await axios.post(loginRoute, {
+          username: formData.username,
+          password: formData.password,
+        });
+
+        if (data.token) {
+          setAuthToken(data.token);
+          setIsLoggedIn(true);
+          navigate("/dashboard");
+        } else {
+          toast.error("Something is wrong!", toastOptions);
+        }
       }
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {

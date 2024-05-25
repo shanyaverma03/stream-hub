@@ -6,3 +6,9 @@ export const getAuthToken = () => {
 export const setAuthToken = (token) => {
   localStorage.setItem("token", token);
 };
+
+export const getHeaders = () => ({
+  headers: {
+    Authorization: "Bearer " + getAuthToken(),
+  },
+});
