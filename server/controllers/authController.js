@@ -97,3 +97,7 @@ module.exports.login = async (req, res, next) => {
 module.exports.validateInitialRequest = async (req, res, next) => {
   res.status(200).send("ok");
 };
+
+module.exports.logout = async (req, res, next) => {
+  res.status(200).send("Logged out successfully");
+};

@@ -39,7 +39,11 @@ async function checkAuthMiddleware(req, res, next) {
     req.user = user;
   } catch (error) {
     console.error(error);
-    return res.status(401).json({ msg: "Not authorised", status: false });
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).send();
+    } else {
+      return res.status(500).send();
+    }
   }
   next();
 }
