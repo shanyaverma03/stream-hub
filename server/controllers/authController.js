@@ -66,7 +66,7 @@ module.exports.login = async (req, res, next) => {
 
   try {
     const user = await User.findOne({ username });
-    if (!user) return res.status(401).send("Authentication failed.");
+    if (!user) return res.status(401).send("This user doesn't exist!.");
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
