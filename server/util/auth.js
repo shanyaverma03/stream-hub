@@ -5,6 +5,7 @@ require("dotenv").config();
 const KEY = process.env.KEY;
 
 const User = require("../models/userModel");
+const Blacklist = require("../models/blacklist");
 
 function createJSONToken(username) {
   return sign({ username }, KEY, { expiresIn: "1h" });
@@ -29,9 +30,17 @@ async function checkAuthMiddleware(req, res, next) {
     return res.status(401).json({ msg: "Not authorised", status: false });
   }
   const authToken = authFragments[1];
-  try {
-    const decoded = validateJSONToken(authToken);
+  req.token = authToken;
 
+  try {
+    const checkIfTokenBlacklisted = await Blacklist.findOne({
+      token: authToken,
+    });
+
+    if (checkIfTokenBlacklisted) {
+      return res.status(401).json({ msg: "Not authorised", status: false });
+    }
+    const decoded = validateJSONToken(authToken);
     const user = await User.findOne({ username: decoded.username });
     if (!user) {
       return res.status(404).json({ msg: "User not found" });

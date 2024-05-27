@@ -4,18 +4,18 @@ require("dotenv").config();
 const User = require("../models/userModel");
 const { createJSONToken } = require("../util/auth");
 const { isValidEmail, isValidText } = require("../util/validation");
+const Blacklist = require("../models/blacklist");
 
 module.exports.register = async (req, res, next) => {
   const { username, email, password } = req.body;
-  let errors = {};
 
   if (!isValidText(username, 3)) {
-    errors.username = "Invalid username!";
+    return res.status(422).send("Invalid username!");
   } else {
     try {
       const usernameCheck = await User.findOne({ username });
       if (usernameCheck) {
-        errors.username = "Username already exists!";
+        return res.status(422).send("Username already exists!");
       }
     } catch (err) {
       console.log(err);
@@ -23,12 +23,12 @@ module.exports.register = async (req, res, next) => {
   }
 
   if (!isValidEmail(email)) {
-    errors.email = "Invalid email!";
+    return res.status(422).send("Invalid email!");
   } else {
     try {
       const emailCheck = await User.findOne({ email });
       if (emailCheck) {
-        errors.email = "Email already exists!";
+        return res.status(422).send("Email already exists!");
       }
     } catch (err) {
       console.log(err);
@@ -36,14 +36,7 @@ module.exports.register = async (req, res, next) => {
   }
 
   if (!isValidText(password, 8)) {
-    errors.password = "Invalid password. Must be at least 8 characters long.";
-  }
-
-  if (Object.keys(errors).length > 0) {
-    return res.status(422).json({
-      message: "User signup failed due to validation errors.",
-      errors,
-    });
+    return res.status(422).send("Invalid password. Must be min 8 char long!");
   }
 
   try {
@@ -73,15 +66,11 @@ module.exports.login = async (req, res, next) => {
 
   try {
     const user = await User.findOne({ username });
-    if (!user)
-      return res.status(401).json({ message: "Authentication failed." });
+    if (!user) return res.status(401).send("Authentication failed.");
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
-      return res.status(422).json({
-        message: "Invalid credentials.",
-        errors: { credentials: "Invalid email or password entered." },
-      });
+      return res.status(422).send("Invalid email or password!");
     delete user.password;
 
     const token = createJSONToken(username);
@@ -99,5 +88,17 @@ module.exports.validateInitialRequest = async (req, res, next) => {
 };
 
 module.exports.logout = async (req, res, next) => {
-  res.status(200).send("Logged out successfully");
+  const { token } = req;
+  const newBlackList = new Blacklist({
+    token,
+  });
+
+  try {
+    await newBlackList.save();
+    console.log("added to blacklist");
+    res.status(200).send("Logged out successfully");
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send();
+  }
 };
