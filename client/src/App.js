@@ -13,7 +13,11 @@ import { UserContext } from "./store/user-context";
 
 import { getAuthToken, getHeaders, removeAuthToken } from "./utils/auth";
 import { PrivateRoutes, AuthRoutes } from "./pages/ConditionalRoutes";
-import { validateInitialRequestRoute } from "./utils/APIRoutes";
+import {
+  validateInitialRequestRoute,
+  getDestinationsRoute,
+} from "./utils/APIRoutes";
+import Destinations from "./pages/Destinations";
 
 function App() {
   const toastOptions = {
@@ -25,6 +29,8 @@ function App() {
   };
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [destinations, setDestinations] = useState([]);
+  const [isDestinationsLoading, setIsDestinationsLoading] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -51,14 +57,42 @@ function App() {
     };
 
     checkUser();
+
+    const getDestinations = async () => {
+      try {
+        if (getAuthToken()) {
+          setIsDestinationsLoading(true);
+
+          const { data } = await axios.get(getDestinationsRoute, getHeaders());
+
+          if (data.destinations) {
+            setDestinations(data.destinations);
+          }
+          setIsDestinationsLoading(false);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getDestinations();
   }, []);
 
   return (
-    <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+    <UserContext.Provider
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        destinations,
+        setDestinations,
+        isDestinationsLoading,
+      }}
+    >
       <Router>
         <Routes>
           <Route element={<PrivateRoutes />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/destinations" element={<Destinations />} />
           </Route>
           <Route element={<AuthRoutes />}>
             <Route path="/login" element={<Login />} />
