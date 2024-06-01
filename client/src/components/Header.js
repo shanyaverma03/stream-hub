@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -45,10 +45,24 @@ function Header() {
       >
         <div className="brand">
           <img src={logo} alt="StreamHub Logo" className="logo" />
-          <h1 className="site-name">StreamHub</h1>
+          <Link to="/dashboard" className="site-name">
+            StreamHub
+          </Link>
         </div>
+        <div className="options">
+          {isLoggedIn && (
+            <NavLink
+              to="/destinations"
+              className={({ isActive }) =>
+                isActive ? "nav-link nav-link-active" : "nav-link"
+              }
+            >
+              Destinations
+            </NavLink>
+          )}
 
-        {isLoggedIn && <button onClick={logoutHandler}>Logout</button>}
+          {isLoggedIn && <button onClick={logoutHandler}>Logout</button>}
+        </div>
       </div>
       <ToastContainer />
     </div>
