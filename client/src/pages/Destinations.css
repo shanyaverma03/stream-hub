@@ -1,0 +1,132 @@
+.destinations-header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 2rem;
+}
+
+.destinations-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+.separator {
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin-bottom: 20px;
+}
+
+.destinations-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.destination-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.destination-item:last-child {
+  border-bottom: none;
+}
+
+.destination-item span {
+  font-size: 18px;
+  color: #333;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background-color: #ed7845;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background-color: #d26b3c;
+}
+
+.delete-btn {
+  background-color: #c50900;
+  color: #fff;
+}
+
+.delete-btn:hover {
+  background-color: #a30600;
+}
+
+h2 {
+  margin: 1rem;
+}
+
+.card {
+  border-radius: 8px;
+  overflow: hidden;
+  width: 60%;
+  margin: 5rem auto;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #525050;
+  color: white;
+  padding: 10px 15px;
+}
+
+.card-column {
+  flex: 1;
+  text-align: center;
+}
+
+.separator {
+  border: 0;
+  height: 1px;
+  background-color: #333;
+  margin: 0;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  transition: background-color 0.3s;
+}
+
+.card-row:hover {
+  background-color: #d4d4d4;
+}
+
+.api-key-input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.action-icon {
+  margin: 0 5px;
+  cursor: pointer;
+  color: #333;
+}
+
+.action-icon:hover {
+  color: #555;
+}

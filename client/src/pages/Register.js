@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -8,18 +8,11 @@ import "./Auth.css";
 import { registerRoute } from "../utils/APIRoutes";
 import { UserContext } from "../store/user-context";
 import { setAuthToken } from "../utils/auth";
+import { toastOptions } from "../utils/toast";
 
 const Register = () => {
   const navigate = useNavigate();
   const { setIsLoggedIn } = useContext(UserContext);
-
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "dark",
-  };
 
   const [formData, setFormData] = useState({
     username: "",
@@ -144,7 +137,6 @@ const Register = () => {
           Already have an account ? <Link to="/login">Login.</Link>
         </span>
       </form>
-      <ToastContainer />
     </div>
   );
 };
