@@ -6,4 +6,4 @@ export const getUserInfoRoute = `${host}/api/auth/getUserInfo`;
 export const validateInitialRequestRoute = `${host}/api/auth/validateInitialRequest`;
 
 export const getDestinationsRoute = `${host}/api/destinations`;
-export const addDestinationRoute = `${host}/api/destination`;
+export const destinationRoute = `${host}/api/destination`;
