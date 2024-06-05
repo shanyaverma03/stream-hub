@@ -1,23 +1,16 @@
 import React, { useContext } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 import logo from "../assets/streamLogo.png";
 import "./Header.css";
 import { UserContext } from "../store/user-context";
 import { logoutRoute } from "../utils/APIRoutes";
 import { getHeaders, removeAuthToken } from "../utils/auth";
+import { toastOptions } from "../utils/toast";
 
 function Header() {
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "dark",
-  };
-
   const navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
 
@@ -64,7 +57,6 @@ function Header() {
           {isLoggedIn && <button onClick={logoutHandler}>Logout</button>}
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 }

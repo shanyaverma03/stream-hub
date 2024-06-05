@@ -18,19 +18,11 @@ import {
   getDestinationsRoute,
 } from "./utils/APIRoutes";
 import Destinations from "./pages/Destinations";
+import { toastOptions } from "./utils/toast";
 
 function App() {
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 8000,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "dark",
-  };
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [destinations, setDestinations] = useState([]);
-  const [isDestinationsLoading, setIsDestinationsLoading] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -61,14 +53,11 @@ function App() {
     const getDestinations = async () => {
       try {
         if (getAuthToken()) {
-          setIsDestinationsLoading(true);
-
           const { data } = await axios.get(getDestinationsRoute, getHeaders());
 
           if (data.destinations) {
             setDestinations(data.destinations);
           }
-          setIsDestinationsLoading(false);
         }
       } catch (err) {
         console.log(err);
@@ -85,7 +74,6 @@ function App() {
         setIsLoggedIn,
         destinations,
         setDestinations,
-        isDestinationsLoading,
       }}
     >
       <Router>
