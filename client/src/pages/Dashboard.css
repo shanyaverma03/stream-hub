@@ -91,32 +91,6 @@
   background-color: #007bff;
 }
 
-.destination-options {
-  display: flex;
-  justify-content: space-around;
-  margin: 2rem;
-}
-
-.destination-options button {
-  font-size: 1.2rem;
-  padding: 0.5rem 1rem;
-  color: #007bff;
-  border: 1px solid #007bff;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.destination-options button:hover {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.destination-options button.selected {
-  background-color: #007bff;
-  color: #fff;
-}
-
 form {
   display: flex;
   flex-direction: column;
