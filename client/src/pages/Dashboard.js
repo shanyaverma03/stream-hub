@@ -13,10 +13,15 @@ import loader from "../assets/loader.gif";
 const socket = io("http://localhost:8000");
 
 const Dashboard = () => {
-  const [isDestinationSelected, setIsDestinatonSelected] = useState(false);
+  const logoMapping = {
+    YouTube,
+    Facebook,
+  };
+
+  const [selectedDestination, setSelectedDestination] = useState(null);
   const [media, setMedia] = useState(null);
   const [isUserMediaLoading, setIsUserMediaLoading] = useState(false);
-  const [modalIsOpen, setModalIsOpen] = useState(false); // State to control modal visibility
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const videoRef = useRef(null);
 
@@ -67,8 +72,9 @@ const Dashboard = () => {
     mediaRecorder.start(25);
   };
 
-  const destinationSelectHandler = () => {
-    setIsDestinatonSelected((prevState) => !prevState);
+  const destinationSelectHandler = (channel, event) => {
+    event.stopPropagation();
+    setSelectedDestination(channel);
   };
 
   const addNewDestinationHandler = () => {
@@ -78,7 +84,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <Header />
-      <div className="card">
+      <div className="card" onClick={() => setSelectedDestination(null)}>
         <h1>Create a Live Stream</h1>
         {isUserMediaLoading ? (
           <img src={loader} alt="loader" />
@@ -103,18 +109,16 @@ const Dashboard = () => {
               {destinations.map((destination, index) => (
                 <img
                   key={index}
-                  src={
-                    destination.channel === "YouTube"
-                      ? YouTube
-                      : "" || destination.channel === "Facebook"
-                      ? Facebook
-                      : ""
-                  }
+                  src={logoMapping[destination.channel]}
                   alt="Channel Logo"
                   className={`destination-logo ${
-                    isDestinationSelected ? "selected" : ""
+                    selectedDestination === destination.channel
+                      ? "selected"
+                      : ""
                   }`}
-                  onClick={destinationSelectHandler}
+                  onClick={(event) =>
+                    destinationSelectHandler(destination.channel, event)
+                  }
                 />
               ))}
               {destinations.length < 2 && (
@@ -132,7 +136,7 @@ const Dashboard = () => {
           )}
         </div>
 
-        {isDestinationSelected && (
+        {selectedDestination && (
           <button className="start-stream-btn" onClick={startLiveStreamHandler}>
             Start Stream
           </button>
