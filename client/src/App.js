@@ -39,7 +39,7 @@ function App() {
           }
         }
       } catch (error) {
-        if (error.response.status === 401) {
+        if (error.response && error.response.status === 401) {
           removeAuthToken();
           setIsLoggedIn(false);
         } else {

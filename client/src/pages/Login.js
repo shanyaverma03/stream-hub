@@ -49,7 +49,7 @@ const Login = () => {
           password: formData.password,
         });
 
-        if (data.token) {
+        if (data) {
           setAuthToken(data.token);
           setIsLoggedIn(true);
           navigate("/dashboard");
@@ -59,7 +59,7 @@ const Login = () => {
       }
     } catch (err) {
       console.log(err);
-      toast.error(err.response.data, toastOptions);
+      toast.error(err.message, toastOptions);
     }
   };
 
