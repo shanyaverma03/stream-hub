@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { io } from "socket.io-client";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Header from "../components/Header";
 import "./Dashboard.css";
@@ -9,6 +11,7 @@ import addDestinationLogo from "../assets/add-icon.svg";
 import { UserContext } from "../store/user-context";
 import Modal from "../utils/Modal";
 import loader from "../assets/loader.gif";
+import { toastOptions } from "../utils/toast";
 
 const socket = io("http://localhost:8000");
 
@@ -17,11 +20,12 @@ const Dashboard = () => {
     YouTube,
     Facebook,
   };
-
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [media, setMedia] = useState(null);
   const [isUserMediaLoading, setIsUserMediaLoading] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [startStream, setStartStream] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
 
   const videoRef = useRef(null);
 
@@ -45,11 +49,14 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    console.log(destinations);
     socket.on("connect", () => {
       console.log("Socket connected", socket.id);
     });
 
-    getUserMedia();
+    if (!media) {
+      getUserMedia();
+    }
 
     return () => {
       if (socket.readyState === 1) {
@@ -59,17 +66,41 @@ const Dashboard = () => {
   }, []);
 
   const startLiveStreamHandler = () => {
+    setStartStream(true);
+    let apiKey = "";
+    const res = destinations.filter(
+      (destination) => destination.channel === selectedDestination
+    );
+    res.forEach((des) => {
+      apiKey = des.apiKey;
+    });
+    socket.emit("start-stream", { apiKey, selectedDestination });
+
     const mediaRecorder = new MediaRecorder(media, {
       audioBitsPerSecond: 128000,
       videoBitsPerSecond: 2500000,
       framerate: 25,
     });
+
     mediaRecorder.ondataavailable = (event) => {
-      console.log("on data available");
       console.log("Binary stream available", event.data);
       socket.emit("binarystream", event.data);
     };
     mediaRecorder.start(25);
+    setMediaRecorder(mediaRecorder);
+    toast.success(`Streaming has been started!`, toastOptions);
+  };
+
+  const stopLiveStreamHandler = () => {
+    setStartStream(false);
+
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      mediaRecorder.ondataavailable = null;
+      setMediaRecorder(null);
+    }
+    socket.emit("stop-stream");
+    toast.success(`Streaming has been stopped`, toastOptions);
   };
 
   const destinationSelectHandler = (channel, event) => {
@@ -136,11 +167,18 @@ const Dashboard = () => {
           )}
         </div>
 
-        {selectedDestination && (
-          <button className="start-stream-btn" onClick={startLiveStreamHandler}>
-            Start Stream
-          </button>
-        )}
+        <>
+          {!startStream && selectedDestination && (
+            <button className="stream-btn" onClick={startLiveStreamHandler}>
+              Start Stream
+            </button>
+          )}
+          {startStream && (
+            <button className="stream-btn" onClick={stopLiveStreamHandler}>
+              Stop Stream
+            </button>
+          )}
+        </>
       </div>
       <Modal modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen} />
     </div>

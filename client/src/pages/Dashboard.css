@@ -60,7 +60,7 @@
   margin-left: 1rem;
 }
 
-.start-stream-btn {
+.stream-btn {
   font-size: 1.25rem;
   padding: 0.75rem 1.5rem;
   color: #fff;
@@ -72,7 +72,7 @@
   margin-top: 1rem;
 }
 
-.start-stream-btn:hover {
+.stream-btn:hover {
   background: #0056b3;
 }
 
