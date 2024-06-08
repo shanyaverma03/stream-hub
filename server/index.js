@@ -49,7 +49,20 @@ const io = socket(server, {
 io.on("connection", (socket) => {
   console.log("Socket connected", socket.id);
   socket.on("start-stream", ({ apiKey, selectedDestination }) => {
-    console.log(apiKey);
+    let streamUrl = "";
+
+    switch (selectedDestination) {
+      case "YouTube":
+        streamUrl = `rtmp://a.rtmp.youtube.com/live2/${apiKey}`;
+        break;
+      case "Facebook":
+        streamUrl = `rtmps://live-api-s.facebook.com:443/rtmp/${apiKey}`;
+        break;
+      default:
+        console.error("Unknown streaming destination");
+        return;
+    }
+
     const options = [
       "-i",
       "-",
@@ -83,7 +96,7 @@ io.on("connection", (socket) => {
       128000 / 4,
       "-f",
       "flv",
-      `rtmp://a.rtmp.youtube.com/live2/${apiKey}`,
+      streamUrl,
     ];
 
     const ffmpegProcess = spawn("ffmpeg", options);
