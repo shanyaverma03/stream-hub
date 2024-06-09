@@ -20,7 +20,7 @@ const Dashboard = () => {
     YouTube,
     Facebook,
   };
-  const [selectedDestination, setSelectedDestination] = useState(null);
+  const [selectedDestinations, setSelectedDestinations] = useState([]);
   const [media, setMedia] = useState(null);
   const [isUserMediaLoading, setIsUserMediaLoading] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -67,14 +67,23 @@ const Dashboard = () => {
 
   const startLiveStreamHandler = () => {
     setStartStream(true);
-    let apiKey = "";
-    const res = destinations.filter(
-      (destination) => destination.channel === selectedDestination
-    );
-    res.forEach((des) => {
-      apiKey = des.apiKey;
+
+    const apiKeys = {};
+
+    selectedDestinations.forEach((selectedDestination) => {
+      const destination = destinations.find(
+        (dest) => dest.channel === selectedDestination
+      );
+      if (destination) {
+        if (selectedDestination === "YouTube") {
+          apiKeys.youtube = destination.apiKey;
+        } else if (selectedDestination === "Facebook") {
+          apiKeys.facebook = destination.apiKey;
+        }
+      }
     });
-    socket.emit("start-stream", { apiKey, selectedDestination });
+
+    socket.emit("start-stream", { apiKeys });
 
     const mediaRecorder = new MediaRecorder(media, {
       audioBitsPerSecond: 128000,
@@ -99,13 +108,18 @@ const Dashboard = () => {
       mediaRecorder.ondataavailable = null;
       setMediaRecorder(null);
     }
+
     socket.emit("stop-stream");
     toast.success(`Streaming has been stopped`, toastOptions);
   };
 
   const destinationSelectHandler = (channel, event) => {
     event.stopPropagation();
-    setSelectedDestination(channel);
+    setSelectedDestinations((prevSelected) =>
+      prevSelected.includes(channel)
+        ? prevSelected.filter((c) => c !== channel)
+        : [...prevSelected, channel]
+    );
   };
 
   const addNewDestinationHandler = () => {
@@ -115,7 +129,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <Header />
-      <div className="card" onClick={() => setSelectedDestination(null)}>
+      <div className="card" onClick={() => setSelectedDestinations([])}>
         <h1>Create a Live Stream</h1>
         {isUserMediaLoading ? (
           <img src={loader} alt="loader" />
@@ -125,7 +139,7 @@ const Dashboard = () => {
             does not support the video tag.
           </video>
         )}
-        <h2>Select Destination</h2>
+        <h2>Select Destination(s)</h2>
 
         <div className="destinations">
           {destinations.length === 0 ? (
@@ -143,7 +157,7 @@ const Dashboard = () => {
                   src={logoMapping[destination.channel]}
                   alt="Channel Logo"
                   className={`destination-logo ${
-                    selectedDestination === destination.channel
+                    selectedDestinations.includes(destination.channel)
                       ? "selected"
                       : ""
                   }`}
@@ -168,7 +182,7 @@ const Dashboard = () => {
         </div>
 
         <>
-          {!startStream && selectedDestination && (
+          {!startStream && selectedDestinations.length > 0 && (
             <button className="stream-btn" onClick={startLiveStreamHandler}>
               Start Stream
             </button>
