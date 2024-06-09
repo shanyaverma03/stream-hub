@@ -51,137 +51,152 @@ io.on("connection", (socket) => {
 
   socket.on("start-stream", ({ apiKeys }) => {
     console.log(apiKeys);
-    const optionsYoutube = [
-      "-i",
-      "-",
-      "-c:v",
-      "libx264",
-      "-preset",
-      "ultrafast",
-      "-tune",
-      "zerolatency",
-      "-r",
-      `${25}`,
-      "-g",
-      `${25 * 2}`,
-      "-keyint_min",
-      25,
-      "-crf",
-      "25",
-      "-pix_fmt",
-      "yuv420p",
-      "-sc_threshold",
-      "0",
-      "-profile:v",
-      "main",
-      "-level",
-      "3.1",
-      "-c:a",
-      "aac",
-      "-b:a",
-      "128k",
-      "-ar",
-      128000 / 4,
-      "-f",
-      "flv",
-      `rtmp://a.rtmp.youtube.com/live2/${apiKeys.youtube}`,
-    ];
+    if (apiKeys.youtube) {
+      const optionsYoutube = [
+        "-i",
+        "-",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "ultrafast",
+        "-tune",
+        "zerolatency",
+        "-r",
+        `${25}`,
+        "-g",
+        `${25 * 2}`,
+        "-keyint_min",
+        25,
+        "-crf",
+        "25",
+        "-pix_fmt",
+        "yuv420p",
+        "-sc_threshold",
+        "0",
+        "-profile:v",
+        "main",
+        "-level",
+        "3.1",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "128k",
+        "-ar",
+        128000 / 4,
+        "-f",
+        "flv",
+        `rtmp://a.rtmp.youtube.com/live2/${apiKeys.youtube}`,
+      ];
 
-    const optionsFacebook = [
-      "-i",
-      "-",
-      "-c:v",
-      "libx264",
-      "-preset",
-      "ultrafast",
-      "-tune",
-      "zerolatency",
-      "-r",
-      `${25}`,
-      "-g",
-      `${25 * 2}`,
-      "-keyint_min",
-      25,
-      "-crf",
-      "25",
-      "-pix_fmt",
-      "yuv420p",
-      "-sc_threshold",
-      "0",
-      "-profile:v",
-      "main",
-      "-level",
-      "3.1",
-      "-c:a",
-      "aac",
-      "-b:a",
-      "128k",
-      "-ar",
-      128000 / 4,
-      "-f",
-      "flv",
-      `rtmps://live-api-s.facebook.com:443/rtmp/${apiKeys.facebook}`,
-    ];
+      const ffmpegYouTube = spawn("ffmpeg", optionsYoutube);
 
-    const ffmpegYouTube = spawn("ffmpeg", optionsYoutube);
-    const ffmpegFacebook = spawn("ffmpeg", optionsFacebook);
-
-    ffmpegYouTube.stderr.on("data", (data) => {
-      console.error(`YouTube ffmpeg stderr: ${data}`);
-    });
-
-    ffmpegFacebook.stderr.on("data", (data) => {
-      console.error(`Facebook ffmpeg stderr: ${data}`);
-    });
-
-    ffmpegYouTube.stdout.on("data", (data) => {
-      console.log(`ffmpeg youtube stdout: ${data}`);
-    });
-
-    ffmpegFacebook.stdout.on("data", (data) => {
-      console.log(`ffmpeg facebook stdout: ${data}`);
-    });
-
-    ffmpegYouTube.on("close", (code) => {
-      console.log(`ffmpeg youtube process exited with code ${code}`);
-    });
-
-    ffmpegFacebook.on("close", (code) => {
-      console.log(`ffmpeg facebook process exited with code ${code}`);
-    });
-
-    socket.on("binarystream", (stream) => {
-      console.log("Binary stream incoming");
-      ffmpegYouTube.stdin.write(stream, (err) => {
-        console.log("Error", err);
+      ffmpegYouTube.stderr.on("data", (data) => {
+        console.error(`YouTube ffmpeg stderr: ${data}`);
       });
-      ffmpegFacebook.stdin.write(stream, (err) => {
-        console.log("Error", err);
+
+      ffmpegYouTube.stdout.on("data", (data) => {
+        console.log(`ffmpeg youtube stdout: ${data}`);
       });
-    });
 
-    socket.on("stop-stream", () => {
-      if (ffmpegYouTube) {
-        ffmpegYouTube.stdin.end();
-        ffmpegYouTube.kill("SIGINT");
-        console.log("Stream stopped and ffmpeg process killed");
-      }
-      if (ffmpegFacebook) {
-        ffmpegFacebook.stdin.end();
-        ffmpegFacebook.kill("SIGINT");
-        console.log("Stream stopped and ffmpeg process killed");
-      }
-    });
+      ffmpegYouTube.on("close", (code) => {
+        console.log(`ffmpeg youtube process exited with code ${code}`);
+      });
 
-    socket.on("disconnect", () => {
-      if (ffmpegYouTube) {
-        ffmpegYouTube.kill("SIGINT");
-      }
-      if (ffmpegFacebook) {
-        ffmpegFacebook.kill("SIGINT");
-      }
-      console.log("Socket disconnected", socket.id);
-    });
+      socket.on("binarystream", (stream) => {
+        console.log("Binary stream incoming");
+        ffmpegYouTube.stdin.write(stream, (err) => {
+          console.log("Error", err);
+        });
+      });
+
+      socket.on("stop-stream", () => {
+        if (ffmpegYouTube) {
+          ffmpegYouTube.stdin.end();
+          ffmpegYouTube.kill("SIGINT");
+          console.log("Stream stopped and ffmpeg process killed");
+        }
+      });
+
+      socket.on("disconnect", () => {
+        if (ffmpegYouTube) {
+          ffmpegYouTube.kill("SIGINT");
+        }
+        console.log("Socket disconnected", socket.id);
+      });
+    }
+
+    if (apiKeys.facebook) {
+      const optionsFacebook = [
+        "-i",
+        "-",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "ultrafast",
+        "-tune",
+        "zerolatency",
+        "-r",
+        `${25}`,
+        "-g",
+        `${25 * 2}`,
+        "-keyint_min",
+        25,
+        "-crf",
+        "25",
+        "-pix_fmt",
+        "yuv420p",
+        "-sc_threshold",
+        "0",
+        "-profile:v",
+        "main",
+        "-level",
+        "3.1",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "128k",
+        "-ar",
+        128000 / 4,
+        "-f",
+        "flv",
+        `rtmps://live-api-s.facebook.com:443/rtmp/${apiKeys.facebook}`,
+      ];
+      const ffmpegFacebook = spawn("ffmpeg", optionsFacebook);
+
+      ffmpegFacebook.stderr.on("data", (data) => {
+        console.error(`Facebook ffmpeg stderr: ${data}`);
+      });
+
+      ffmpegFacebook.stdout.on("data", (data) => {
+        console.log(`ffmpeg facebook stdout: ${data}`);
+      });
+
+      ffmpegFacebook.on("close", (code) => {
+        console.log(`ffmpeg facebook process exited with code ${code}`);
+      });
+
+      socket.on("binarystream", (stream) => {
+        console.log("Binary stream incoming");
+        ffmpegFacebook.stdin.write(stream, (err) => {
+          console.log("Error", err);
+        });
+      });
+
+      socket.on("stop-stream", () => {
+        if (ffmpegFacebook) {
+          ffmpegFacebook.stdin.end();
+          ffmpegFacebook.kill("SIGINT");
+          console.log("Stream stopped and ffmpeg process killed");
+        }
+      });
+
+      socket.on("disconnect", () => {
+        if (ffmpegFacebook) {
+          ffmpegFacebook.kill("SIGINT");
+        }
+        console.log("Socket disconnected", socket.id);
+      });
+    }
   });
 });
 
