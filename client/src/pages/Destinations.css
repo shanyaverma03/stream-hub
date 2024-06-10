@@ -81,6 +81,10 @@ h2 {
   overflow: hidden;
   width: 60%;
   margin: 5rem auto;
+  background: #fff;
+  padding: 1rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .card-header {

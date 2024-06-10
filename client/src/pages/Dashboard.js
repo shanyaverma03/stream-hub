@@ -133,7 +133,10 @@ const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <Header />
-      <div className="card" onClick={() => setSelectedDestinations([])}>
+      <div
+        className="dashboardCard"
+        onClick={() => setSelectedDestinations([])}
+      >
         <h1>Create a Live Stream</h1>
         {isUserMediaLoading ? (
           <img src={loader} alt="loader" />

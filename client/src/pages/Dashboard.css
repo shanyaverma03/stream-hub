@@ -5,14 +5,13 @@
   justify-content: center;
 }
 
-.card {
+.dashboardCard {
   background: #fff;
   padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 80%;
-  max-width: 600px;
+  width: 50%;
   margin-top: 1rem;
 }
 
