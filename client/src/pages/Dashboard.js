@@ -97,7 +97,11 @@ const Dashboard = () => {
     };
     mediaRecorder.start(25);
     setMediaRecorder(mediaRecorder);
-    toast.success(`Streaming has been started!`, toastOptions);
+
+    toast.success(
+      `Streaming has been started on ${Object.keys(apiKeys)}`,
+      toastOptions
+    );
   };
 
   const stopLiveStreamHandler = () => {
