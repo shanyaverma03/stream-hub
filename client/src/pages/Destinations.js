@@ -100,12 +100,14 @@ function Destinations() {
 
       <div className="destinations-header">
         <h1>Destinations</h1>
-        <button
-          className="add-destination-btn"
-          onClick={addNewDestinationHandler}
-        >
-          Add a New Destination
-        </button>
+        {destinations.length < 2 && (
+          <button
+            className="add-destination-btn"
+            onClick={addNewDestinationHandler}
+          >
+            Add a New Destination
+          </button>
+        )}
       </div>
 
       <hr className="separator" />
