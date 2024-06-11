@@ -48,12 +48,13 @@ function App() {
     };
 
     checkUser();
+  }, []);
 
+  useEffect(() => {
     const getDestinations = async () => {
       try {
-        if (getAuthToken()) {
+        if (isLoggedIn && getAuthToken()) {
           const { data } = await axios.get(getDestinationsRoute, getHeaders());
-
           if (data.destinations) {
             setDestinations(data.destinations);
           }
@@ -64,7 +65,7 @@ function App() {
     };
 
     getDestinations();
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <UserContext.Provider

@@ -89,6 +89,7 @@
 
 .addDestinationBtn:hover {
   background-color: #007bff;
+  color: #fff;
 }
 
 @media only screen and (max-width: 536px) {
