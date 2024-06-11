@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Header from "../components/Header";
 import { UserContext } from "../store/user-context";
-import "./Destinations.css";
+import classes from "./Destinations.module.css";
 import Modal from "../utils/Modal";
 import { destinationRoute } from "../utils/APIRoutes";
 import { getAuthToken, getHeaders, removeAuthToken } from "../utils/auth";
@@ -94,15 +94,15 @@ function Destinations() {
 
   return (
     <div>
-      <header className="header">
+      <header>
         <Header />
       </header>
 
-      <div className="destinations-header">
+      <div className={classes.destinationsHeader}>
         <h1>Destinations</h1>
         {destinations.length < 2 && (
           <button
-            className="add-destination-btn"
+            className={classes.addDestinationBtn}
             onClick={addNewDestinationHandler}
           >
             Add a New Destination
@@ -110,22 +110,24 @@ function Destinations() {
         )}
       </div>
 
-      <hr className="separator" />
+      <hr className={classes.separator} />
 
       {destinations && destinations.length > 0 ? (
-        <div className="card">
-          <div className="card-header">
-            <div className="card-column">Platforms</div>
-            <div className="card-column">API Key</div>
-            <div className="card-column">Actions</div>
+        <div className={classes.card}>
+          <div className={classes.cardHeader}>
+            <div className={classes.cardColumn}>Platforms</div>
+            <div className={classes.cardColumn}>API Key</div>
+            <div className={classes.cardColumn}>Actions</div>
           </div>
           {destinations &&
             destinations.map((destination, index) => (
               <React.Fragment key={index}>
-                <hr className="separator" />
-                <div className="card-row">
-                  <div className="card-column">{destination.channel}</div>
-                  <div className="card-column">
+                <hr className={classes.separator} />
+                <div className={classes.cardRow}>
+                  <div className={classes.cardColumn}>
+                    {destination.channel}
+                  </div>
+                  <div className={classes.cardColumn}>
                     <input
                       type={
                         editApiKey && editedDestination === destination.channel
@@ -137,25 +139,25 @@ function Destinations() {
                           ? updatedApiKey
                           : destination.apiKey
                       }
-                      className="api-key-input"
+                      className={classes.apiKeyInput}
                       readOnly={
                         !editApiKey || editedDestination !== destination.channel
                       }
                       onChange={(e) => setUpdatedApiKey(e.target.value)}
                     />
                   </div>
-                  <div className="card-column">
+                  <div className={classes.cardColumn}>
                     {editApiKey && editedDestination === destination.channel ? (
                       <>
                         <FaCheck
-                          className="action-icon"
+                          className={classes.actionIcon}
                           title="Save"
                           onClick={() =>
                             saveEditedDestinationHandler(destination.channel)
                           }
                         />
                         <FaTimes
-                          className="action-icon"
+                          className={classes.actionIcon}
                           title="Cancel"
                           onClick={cancelEditing}
                         />{" "}
@@ -163,12 +165,12 @@ function Destinations() {
                     ) : (
                       <>
                         <FaEdit
-                          className="action-icon"
+                          className={classes.actionIcon}
                           title="Edit"
                           onClick={() => startEditing(destination)}
                         />
                         <FaTrash
-                          className="action-icon"
+                          className={classes.actionIcon}
                           title="Delete"
                           onClick={() =>
                             deleteDestinationHandler(destination.channel)
@@ -182,7 +184,7 @@ function Destinations() {
             ))}
         </div>
       ) : (
-        <h2>Please add a Destination!</h2>
+        <h2 className={classes.addDestination}>Please add a Destination!</h2>
       )}
       <Modal modalIsOpen={modalIsOpen} setModalIsOpen={setModalIsOpen} />
     </div>

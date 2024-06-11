@@ -1,0 +1,126 @@
+.destinationsHeader {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 2rem;
+}
+
+.destinationsHeader h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+.separator {
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin-bottom: 20px;
+}
+
+.addDestination {
+  margin: 1rem;
+  display: flex;
+  justify-content: center;
+  margin-top: 5rem;
+}
+
+.card {
+  border-radius: 8px;
+  overflow: hidden;
+  width: 60%;
+  margin: 5rem auto;
+  background: #fff;
+  padding: 1rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  background-color: #525050;
+  color: white;
+  padding: 10px 15px;
+}
+
+.cardColumn {
+  flex: 1;
+  text-align: center;
+}
+
+.cardRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  transition: background-color 0.3s;
+}
+
+.cardRow:hover {
+  background-color: #d4d4d4;
+}
+
+.apiKeyInput {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.actionIcon {
+  margin: 0 5px;
+  cursor: pointer;
+  color: #333;
+}
+
+.actionIcon:hover {
+  color: #555;
+}
+
+.addDestinationBtn {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.addDestinationBtn:hover {
+  background-color: #007bff;
+}
+
+@media only screen and (max-width: 536px) {
+  .destinationsHeader {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .addDestinationBtn {
+    margin-top: 1rem;
+  }
+
+  .cardRow {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .cardColumn {
+    margin: 0.2rem;
+  }
+
+  .apiKeyInput {
+    width: 60%;
+  }
+
+  .card {
+    width: 80%;
+  }
+}
+
+@media only screen and (min-width: 536px) and (max-width: 1200px) {
+  .card {
+    width: 80%;
+  }
+}

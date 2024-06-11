@@ -7,7 +7,7 @@ import { UserContext } from "../store/user-context";
 import { destinationRoute } from "./APIRoutes";
 import { getHeaders } from "./auth";
 import { toastOptions } from "./toast";
-import "./Modal.css";
+import classes from "./Modal.module.css";
 
 const Modal = ({ modalIsOpen, setModalIsOpen }) => {
   const customStyles = {
@@ -19,7 +19,6 @@ const Modal = ({ modalIsOpen, setModalIsOpen }) => {
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
       width: "50%",
-      height: "50%",
     },
     overlay: {
       backgroundColor: "rgba(0, 0, 0, 0.85)",
@@ -89,14 +88,16 @@ const Modal = ({ modalIsOpen, setModalIsOpen }) => {
       contentLabel="Add Destination Modal"
       ariaHideApp={false}
     >
-      <h2>Add a Destination</h2>
-      <div className="destinationOptions">
+      <h2 className={classes.addDestination}>Add a Destination</h2>
+      <div className={classes.destinationOptions}>
         {destinations &&
           !destinations.some(
             (destination) => destination.channel === "YouTube"
           ) && (
             <button
-              className={selectedDestination === "YouTube" ? "selected" : ""}
+              className={
+                selectedDestination === "YouTube" ? classes.selected : ""
+              }
               onClick={() => selectDestinationHandler("YouTube")}
             >
               YouTube
@@ -107,15 +108,17 @@ const Modal = ({ modalIsOpen, setModalIsOpen }) => {
             (destination) => destination.channel === "Facebook"
           ) && (
             <button
-              className={selectedDestination === "Facebook" ? "selected" : ""}
+              className={
+                selectedDestination === "Facebook" ? classes.selected : ""
+              }
               onClick={() => selectDestinationHandler("Facebook")}
             >
               Facebook
             </button>
           )}
       </div>
-      <form onSubmit={destinationSubmitHandler}>
-        <div className="form-group">
+      <form onSubmit={destinationSubmitHandler} className={classes.apiKeyForm}>
+        <div className={classes.formGroup}>
           <label htmlFor="APIKey">API Key</label>
           <input
             type="text"
@@ -128,12 +131,12 @@ const Modal = ({ modalIsOpen, setModalIsOpen }) => {
         </div>
         <button
           type="submit"
-          className="auth-btn"
+          className={classes.addDestinationBtn}
           disabled={!selectedDestination || apiKey.trim().length === 0}
         >
           Add
         </button>
-        <button type="button" onClick={closeModal}>
+        <button type="button" onClick={closeModal} className={classes.closeBtn}>
           Close
         </button>
       </form>

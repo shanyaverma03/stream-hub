@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, Link } from "react-router-dom";
 
-import "./Auth.css";
+import classes from "./Auth.module.css";
 import { registerRoute } from "../utils/APIRoutes";
 import { UserContext } from "../store/user-context";
 import { setAuthToken } from "../utils/auth";
@@ -83,10 +83,10 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-page">
+    <div className={classes.authPage}>
       <h1>Register</h1>
-      <form onSubmit={handleSubmit} className="auth-form">
-        <div className="form-group">
+      <form onSubmit={handleSubmit} className={classes.authForm}>
+        <div className={classes.formGroup}>
           <label htmlFor="username">Username</label>
           <input
             type="text"
@@ -97,7 +97,7 @@ const Register = () => {
             required
           />
         </div>
-        <div className="form-group">
+        <div className={classes.formGroup}>
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -108,7 +108,7 @@ const Register = () => {
             required
           />
         </div>
-        <div className="form-group">
+        <div className={classes.formGroup}>
           <label htmlFor="password">Password</label>
           <input
             type="password"
@@ -119,7 +119,7 @@ const Register = () => {
             required
           />
         </div>
-        <div className="form-group">
+        <div className={classes.formGroup}>
           <label htmlFor="confirmPassword">Confirm Password</label>
           <input
             type="password"
@@ -130,10 +130,10 @@ const Register = () => {
             required
           />
         </div>
-        <button type="submit" className="auth-btn">
+        <button type="submit" className={classes.authBtn}>
           Register
         </button>
-        <span>
+        <span className={classes.redirect}>
           Already have an account ? <Link to="/login">Login.</Link>
         </span>
       </form>

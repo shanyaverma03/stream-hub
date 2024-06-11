@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Header from "../components/Header";
-import "./Dashboard.css";
+import classes from "./Dashboard.module.css";
 import YouTube from "../assets/youTubeLogo.png";
 import Facebook from "../assets/facebookLogo.png";
 import addDestinationLogo from "../assets/add-icon.svg";
@@ -131,27 +131,27 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="dashboard-page">
+    <div className={classes.dashboardPage}>
       <Header />
       <div
-        className="dashboardCard"
+        className={classes.dashboardCard}
         onClick={() => setSelectedDestinations([])}
       >
         <h1>Create a Live Stream</h1>
         {isUserMediaLoading ? (
           <img src={loader} alt="loader" />
         ) : (
-          <video ref={videoRef} className="video-stream" autoPlay muted>
+          <video ref={videoRef} className={classes.videoStream} autoPlay muted>
             <source src="your-video-source.mp4" type="video/mp4" /> Your browser
             does not support the video tag.
           </video>
         )}
         <h2>Select Destination(s)</h2>
 
-        <div className="destinations">
+        <div className={classes.destinations}>
           {destinations.length === 0 ? (
             <button
-              className="add-destination-btn"
+              className={classes.addDestinationBtn}
               onClick={addNewDestinationHandler}
             >
               + Add a destination
@@ -163,9 +163,9 @@ const Dashboard = () => {
                   key={index}
                   src={logoMapping[destination.channel]}
                   alt="Channel Logo"
-                  className={`destination-logo ${
+                  className={`${classes.destinationLogo} ${
                     selectedDestinations.includes(destination.channel)
-                      ? "selected"
+                      ? classes.selected
                       : ""
                   }`}
                   onClick={(event) =>
@@ -174,14 +174,16 @@ const Dashboard = () => {
                 />
               ))}
               {destinations.length < 2 && (
-                <div className="destination-container">
+                <div className={classes.destinationContainer}>
                   <img
                     src={addDestinationLogo}
-                    className="add-destination-logo"
+                    className={classes.addDestinationLogo}
                     alt="add destination logo"
                     onClick={addNewDestinationHandler}
                   />
-                  <span className="tooltip-text">Add a new destination</span>
+                  <span className={classes.tooltipText}>
+                    Add a new destination
+                  </span>
                 </div>
               )}
             </>
@@ -190,12 +192,18 @@ const Dashboard = () => {
 
         <>
           {!startStream && selectedDestinations.length > 0 && (
-            <button className="stream-btn" onClick={startLiveStreamHandler}>
+            <button
+              className={classes.streamBtn}
+              onClick={startLiveStreamHandler}
+            >
               Start Stream
             </button>
           )}
           {startStream && (
-            <button className="stream-btn" onClick={stopLiveStreamHandler}>
+            <button
+              className={classes.streamBtn}
+              onClick={stopLiveStreamHandler}
+            >
               Stop Stream
             </button>
           )}

@@ -1,4 +1,4 @@
-.dashboard-page {
+.dashboardPage {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,8 +11,8 @@
   border-radius: 8px;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 50%;
-  margin-top: 1rem;
+  width: 40%;
+  margin-top: 2rem;
 }
 
 .card h1 {
@@ -21,7 +21,7 @@
   margin-bottom: 1rem;
 }
 
-.video-stream {
+.videoStream {
   width: 100%;
   border-radius: 0.5rem;
   margin-bottom: 0.6rem;
@@ -39,27 +39,27 @@
   align-items: center;
 }
 
-.destination-logo {
+.destinationLogo {
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.3s;
   width: 50px;
 }
 
-.destination-logo:hover {
+.destinationLogo:hover {
   transform: scale(1.1);
 }
 
-.destination-logo.selected {
+.destinationLogo.selected {
   border: 3px solid #007bff;
 }
 
-.add-destination-logo {
+.addDestinationLogo {
   width: 40px;
   margin-left: 1rem;
 }
 
-.stream-btn {
+.streamBtn {
   font-size: 1.25rem;
   padding: 0.75rem 1.5rem;
   color: #fff;
@@ -71,11 +71,11 @@
   margin-top: 1rem;
 }
 
-.stream-btn:hover {
+.streamBtn:hover {
   background: #0056b3;
 }
 
-.add-destination-btn {
+.addDestinationBtn {
   font-size: 1rem;
   padding: 0.5rem 1rem;
   color: #007bff;
@@ -86,61 +86,16 @@
   margin-top: 1rem;
 }
 
-.add-destination-btn:hover {
+.addDestinationBtn:hover {
   background-color: #007bff;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  border-radius: 2rem;
-  padding: 1rem;
-  background: #fff;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.form-group input {
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-}
-
-.auth-btn {
-  font-size: 1.2rem;
-  padding: 1rem 0.5rem;
-  margin-top: 0;
-  color: #fff;
-  background: #007bff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-  width: 40%;
-}
-
-.auth-btn:hover {
-  background: #0056b3;
-}
-
-.auth-btn:disabled {
-  background-color: #333;
-  cursor: not-allowed;
-}
-
-.destination-container {
+.destinationContainer {
   position: relative;
   display: inline-block;
 }
 
-.tooltip-text {
+.tooltipText {
   visibility: hidden;
   background-color: black;
   color: #fff;
@@ -156,7 +111,7 @@ form {
   font-size: 0.8rem;
 }
 
-.tooltip-text::after {
+.tooltipText::after {
   content: "";
   position: absolute;
   top: 100%; /* Position the arrow below the tooltip */
@@ -167,7 +122,48 @@ form {
   border-color: black transparent transparent transparent;
 }
 
-.destination-container:hover .tooltip-text {
+.destinationContainer:hover .tooltipText {
   visibility: visible;
   opacity: 1;
+}
+
+@media only screen and (max-width: 576px) {
+  .dashboardCard {
+    width: 80%;
+  }
+
+  .dashboardCard h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dashboardCard h2 {
+    font-size: 1rem;
+  }
+
+  .destinationLogo {
+    width: 40px;
+  }
+
+  .streamBtn {
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (min-width: 576px) and (max-width: 768px) {
+  .dashboardCard {
+    width: 70%;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 992px) {
+  .dashboardCard {
+    width: 60%;
+  }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1200px) {
+  .dashboardCard {
+    width: 50%;
+  }
 }

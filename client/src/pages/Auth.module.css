@@ -1,4 +1,4 @@
-.auth-page {
+.authPage {
   height: 100vh;
   width: 100vw;
   display: flex;
@@ -9,13 +9,13 @@
   font-family: Arial, sans-serif;
 }
 
-h1 {
+.authPage h1 {
   font-size: 2.5rem;
   color: #333;
   margin-bottom: 20px;
 }
 
-.auth-form {
+.authForm {
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -24,13 +24,13 @@ h1 {
   background: #fff;
 }
 
-.form-group label {
+.formGroup label {
   display: block;
   margin-bottom: 5px;
   color: #333;
 }
 
-.form-group input {
+.formGroup input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
@@ -38,7 +38,7 @@ h1 {
   font-size: 1rem;
 }
 
-.auth-btn {
+.authBtn {
   font-size: 1.25rem;
   padding: 1rem 2rem;
   margin-top: 2rem;
@@ -50,11 +50,11 @@ h1 {
   transition: background 0.3s;
 }
 
-.auth-btn:hover {
+.authBtn:hover {
   background: #0056b3;
 }
 
-span {
+.redirect {
   margin: 0;
   color: #333;
   text-transform: uppercase;
@@ -62,5 +62,21 @@ span {
     color: #d6536d;
     text-decoration: none;
     font-weight: bold;
+  }
+}
+
+@media only screen and (max-width: 460px) {
+  .authForm {
+    padding: 0.8rem 1rem;
+  }
+
+  .redirect {
+    font-size: 0.8rem;
+  }
+}
+
+@media only screen and (min-width: 460px) and (max-width: 576px) {
+  .authForm {
+    padding: 1rem 3rem;
   }
 }

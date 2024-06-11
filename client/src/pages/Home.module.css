@@ -19,10 +19,10 @@
 .content h2 {
   font-size: 1.5rem;
   color: #666;
-  padding: 2rem;
+  margin: 2rem;
 }
 
-.get-started-btn {
+.getStartedBtn {
   font-size: 1.25rem;
   padding: 10px 20px;
   color: #fff;
@@ -32,9 +32,10 @@
   cursor: pointer;
   animation: pop 2s infinite;
   transition: background 0.3s;
+  margin-top: 2rem;
 }
 
-.get-started-btn:hover {
+.getStartedBtn:hover {
   background: #0056b3;
 }
 
@@ -45,5 +46,16 @@
   }
   50% {
     transform: scale(1.1);
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .content h1 {
+    margin: 3rem;
+    font-size: 2rem;
+  }
+
+  .content h2 {
+    font-size: 1.3rem;
   }
 }

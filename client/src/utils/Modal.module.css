@@ -1,0 +1,125 @@
+.destinationOptions {
+  display: flex;
+  justify-content: space-around;
+  margin: 2rem;
+}
+
+.destinationOptions button {
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  color: #007bff;
+  border: 1px solid #007bff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.destinationOptions button:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.destinationOptions button.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.addDestinationBtn {
+  font-size: 1.25rem;
+  padding: 1rem 2rem;
+  color: #fff;
+  background: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  width: 30%;
+}
+
+.addDestinationBtn:hover {
+  background: #00000071;
+  color: #fff;
+}
+
+.addDestinationBtn:disabled {
+  cursor: not-allowed;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.addDestination {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #353333;
+  padding: 0.5rem;
+}
+
+.closeBtn {
+  font-size: 0.8rem;
+  color: #333;
+  border: none;
+  transition: background 0.3s;
+  padding: 0.5rem 1rem;
+}
+
+.closeBtn:hover {
+  color: #fff;
+  background-color: #333;
+  transition: background 0.3s;
+}
+
+.apiKeyForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media only screen and (max-width: 400px) {
+  .addDestination {
+    font-size: 1rem;
+  }
+
+  .addDestinationBtn {
+    width: 80%;
+    margin: 0;
+    font-size: 0.8rem;
+  }
+
+  .destinationOptions button {
+    font-size: 0.8rem;
+  }
+
+  .formGroup label {
+    font-size: 0.8rem;
+  }
+}
+
+@media only screen and (min-width: 400px) and (max-width: 570px) {
+  .addDestination {
+    font-size: 1.3rem;
+  }
+
+  .addDestinationBtn {
+    width: 70%;
+  }
+}
+
+@media only screen and (min-width: 570px) and (max-width: 768px) {
+  .addDestinationBtn {
+    width: 70%;
+  }
+}

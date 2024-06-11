@@ -7,7 +7,7 @@
   text-align: center;
 }
 
-.logo-container {
+.logoContainer {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,14 +17,14 @@
   width: 100px;
 }
 
-.logo-container-logged-in {
+.logoContainerLoggedIn {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.site-name {
+.siteName {
   color: #fff;
   font-size: 2rem;
   margin: 0;
@@ -38,23 +38,26 @@
 }
 
 .options {
-  width: 20%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 }
 
-.nav-link {
+.navLink {
   color: #fff;
   font-size: 1.25rem;
   text-decoration: none;
 }
 
-.nav-link-active {
+.navLinkActive {
+  color: #fff;
+  font-size: 1.25rem;
+  text-decoration: none;
   text-decoration: underline;
 }
 
-button {
+.logoutBtn {
   font-size: 1.25rem;
   padding: 0.5rem 1rem;
   margin-right: 1rem;
@@ -66,7 +69,55 @@ button {
   transition: background 0.3s;
 }
 
-button:hover {
+.logoutBtn:hover {
   color: #fff;
   background: #333;
+}
+
+.hamburgerIcon {
+  display: none;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .hamburgerIcon {
+    display: block;
+    font-size: 2rem;
+    margin-right: 1rem;
+  }
+
+  .show {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 5rem;
+    right: 0;
+    background-color: #333;
+    width: 35%;
+    height: auto;
+    z-index: 1000;
+  }
+
+  .navLink,
+  .logoutBtn {
+    margin: 1rem 0;
+    color: #fff;
+    background: none;
+    padding: 0.5rem;
+    border-radius: 10px;
+  }
+
+  .navLink:hover,
+  .logoutBtn:hover {
+    background: #fff;
+    color: #333;
+  }
+
+  .siteName {
+    font-size: 1.5rem;
+  }
+
+  .options {
+    display: none;
+  }
 }

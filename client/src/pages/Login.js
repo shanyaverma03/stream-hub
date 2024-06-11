@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-import "./Auth.css";
+import classes from "./Auth.module.css";
 import { loginRoute } from "../utils/APIRoutes";
 import { UserContext } from "../store/user-context";
 import { setAuthToken } from "../utils/auth";
@@ -59,15 +59,15 @@ const Login = () => {
       }
     } catch (err) {
       console.log(err);
-      toast.error(err.message, toastOptions);
+      toast.error(err.response.data, toastOptions);
     }
   };
 
   return (
-    <div className="auth-page">
+    <div className={classes.authPage}>
       <h1>Login</h1>
-      <form onSubmit={handleSubmit} className="auth-form">
-        <div className="form-group">
+      <form onSubmit={handleSubmit} className={classes.authForm}>
+        <div className={classes.formGroup}>
           <label htmlFor="username">Username</label>
           <input
             type="text"
@@ -79,7 +79,7 @@ const Login = () => {
           />
         </div>
 
-        <div className="form-group">
+        <div className={classes.formGroup}>
           <label htmlFor="password">Password</label>
           <input
             type="password"
@@ -90,10 +90,10 @@ const Login = () => {
             required
           />
         </div>
-        <button type="submit" className="auth-btn">
+        <button type="submit" className={classes.authBtn}>
           Login
         </button>
-        <span>
+        <span className={classes.redirect}>
           Don't have an account ? <Link to="/register">Register</Link>
         </span>
       </form>
